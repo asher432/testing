@@ -117,14 +117,7 @@ def _clone(message, bot, multi=0):
                 return sendMessage(msg2, bot, message)
         if multi > 1:
             sleep(2)
-            nextmsg = type(
-                "nextmsg",
-                (object,),
-                {
-                    "chat_id": message.chat_id,
-                    "message_id": message.reply_to_message.message_id + 1,
-                },
-            )
+            nextmsg = type("nextmsg",(object, ), {"chat_id": message.chat_id, "message_id": message.reply_to_message.message_id + 1})
             nextmsg = sendMessage(args[0], bot, nextmsg)
             nextmsg.from_user.id = message.from_user.id
             multi -= 1
@@ -170,28 +163,17 @@ def _clone(message, bot, multi=0):
                 LOGGER.warning(e)
         if BOT_PM and message.chat.type != 'private':
             try:
-                bot.sendMessage(message.from_user.id, text=result, reply_markup=button,
-                                parse_mode=ParseMode.HTML)
+                bot.sendMessage(message.from_user.id, text=result, reply_markup=button, parse_mode=ParseMode.HTML)
             except Exception as e:
                 LOGGER.warning(e)
                 return
     else:
-        sendMessage(
-            "Send Gdrive, GDToT or similar drive sharer Link along with command or by replying to the link by command",
-            bot,
-            message,
-        )
-
+        sendMessage("Send Gdrive, GDToT or similar drive sharer Link along with command or by replying to the link by command", bot, message)
 
 @new_thread
 def cloneNode(update, context):
     _clone(update.message, context.bot)
 
 
-clone_handler = CommandHandler(
-    BotCommands.CloneCommand,
-    cloneNode,
-    filters=CustomFilters.authorized_chat | CustomFilters.authorized_user,
-    run_async=True,
-)
+clone_handler = CommandHandler(BotCommands.CloneCommand, cloneNode, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 dispatcher.add_handler(clone_handler)
