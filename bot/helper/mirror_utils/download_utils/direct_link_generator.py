@@ -367,6 +367,7 @@ def krakenfiles(page_link: str) -> str:
 def gdtot(url: str) -> str:
     if GDTOT_CRYPT is None:
         raise DirectDownloadLinkException("GDTOT_CRYPT Cookie not provided")
+    match = re_findall(r'https?://(.+)\.gdtot\.(.+)\/\S+\/\S+', url)[0]
     with rsession() as client:
         client.cookies.update({'crypt': GDTOT_CRYPT})
         client.get(url)
