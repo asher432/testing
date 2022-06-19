@@ -1,3 +1,31 @@
+Skip to content
+Search or jump to…
+Pulls
+Issues
+Marketplace
+Explore
+ 
+@Shamanth2572 
+majnurangeela
+/
+mirror-hunter-upstream
+Public template
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+mirror-hunter-upstream/bot/helper/mirror_utils/download_utils/direct_link_generator.py /
+@majnurangeela
+majnurangeela Update direct_link_generator.py
+Latest commit b182cb2 3 days ago
+ History
+ 1 contributor
+677 lines (596 sloc)  25.3 KB
+
 # Copyright (C) 2019 The Raphielscape Company LLC.
 #
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
@@ -8,20 +36,23 @@ from https://github.com/AvinashReddy3108/PaperplaneExtended . I hereby take no c
 than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtended/commits/master/userbot/modules/direct_links.py
 for original authorship. """
 
-from requests import get as rget, head as rhead, post as rpost, Session as rsession
-from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search
 import requests
 import re
+import os
+from time import sleep
+from selenium import webdriver
+#from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+
 from base64 import b64decode
 from urllib.parse import urlparse, unquote
 from json import loads as jsnloads
 from lk21 import Bypass
-from lxml import etree
 from cfscrape import create_scraper
-import cloudscraper
 from bs4 import BeautifulSoup
 from base64 import standard_b64encode
-
+from lxml import etree
+import cloudscraper
 from bot import LOGGER, UPTOBOX_TOKEN, CRYPT, UNIFIED_EMAIL, UNIFIED_PASS, HUBDRIVE_CRYPT, KATDRIVE_CRYPT, DRIVEFIRE_CRYPT, XSRF_TOKEN, laravel_session
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.ext_utils.bot_utils import *
@@ -82,19 +113,53 @@ def direct_link_generator(link: str):
 
 def zippy_share(url: str) -> str:
     """ ZippyShare direct link generator
-    Based on https://github.com/zevtyardt/lk21 """
+    Based on https://github.com/KenHV/Mirror-Bot
+             https://github.com/jovanzers/WinTenCermin
+    try:
+        link = re.findall(r'\bhttps?://.*zippyshare\.com\S+', url)[0]
+    except IndexError:
+        raise DirectDownloadLinkException("ERROR: No Zippyshare links found")
+    try:
+        base_url = re.search('http.+.zippyshare.com/', link).group()
+        response = requests.get(link).content
+        pages = BeautifulSoup(response, "lxml")
+        try:
+            js_script = pages.find("div", {"class": "center"})
+            if js_script is not None:
+                js_script = js_script.find_all("script")[1]
+            else:
+                raise DirectDownloadLinkException("ERROR: No Zippyshare links found")
+        except IndexError:
+            js_script = pages.find("div", {"class": "right"})
+            if js_script is not None:
+                js_script = js_script.find_all("script")[0]
+            else:
+                raise DirectDownloadLinkException("ERROR: No Zippyshare links found")
+        js_content = re.findall(r'\.href.=."/(.*?)";', str(js_script))
+        js_content = str(js_content[0]).split('"')
+#        n = str(js_script).split('var n = ')[1].split(';')[0].split('%')
+#        n = int(n[0]) % int(n[1])
+#        b = str(js_script).split('var b = ')[1].split(';')[0].split('%')
+#        b = int(b[0]) % int(b[1])
+#        z = int(str(js_script).split('var z = ')[1].split(';')[0])
+#        math_ = str(n + b + z - 3)
+        math = re.findall("\d+",js_content[1])
+        math_ = int(math[0]) % int(math[1]) + int(math[2]) % int(math[3])
+        return base_url + str(js_content[0]) + str(math_) + str(js_content[2])
+    except IndexError:
+        raise DirectDownloadLinkException("ERROR: Can't find download button")"""
     return Bypass().bypass_zippyshare(url)
 
 def yandex_disk(url: str) -> str:
     """ Yandex.Disk direct link generator
     Based on https://github.com/wldhx/yadisk-direct """
     try:
-        link = re_findall(r'\b(https?://(yadi.sk|disk.yandex.com)\S+)', url)[0][0]
+        link = re.findall(r'\b(https?://(yadi.sk|disk.yandex.com)\S+)', url)[0][0]
     except IndexError:
         return "No Yandex.Disk links found\n"
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
     try:
-        return rget(api.format(link)).json()['href']
+        return requests.get(api.format(link)).json()['href']
     except KeyError:
         raise DirectDownloadLinkException("ERROR: File not found/Download limit reached\n")
 
@@ -102,7 +167,7 @@ def uptobox(url: str) -> str:
     """ Uptobox direct link generator
     based on https://github.com/jovanzers/WinTenCermin """
     try:
-        link = re_findall(r'\bhttps?://.*uptobox\.com\S+', url)[0]
+        link = re.findall(r'\bhttps?://.*uptobox\.com\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No Uptobox links found\n")
     if UPTOBOX_TOKEN is None:
@@ -110,12 +175,12 @@ def uptobox(url: str) -> str:
         dl_url = link
     else:
         try:
-            link = re_findall(r'\bhttp?://.*uptobox\.com/dl\S+', url)[0]
+            link = re.findall(r'\bhttp?://.*uptobox\.com/dl\S+', url)[0]
             dl_url = link
         except:
-            file_id = re_findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
+            file_id = re.findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
             file_link = 'https://uptobox.com/api/link?token=%s&file_code=%s' % (UPTOBOX_TOKEN, file_id)
-            req = rget(file_link)
+            req = requests.get(file_link)
             result = req.json()
             dl_url = result['data']['dlLink']
     return dl_url
@@ -123,10 +188,10 @@ def uptobox(url: str) -> str:
 def mediafire(url: str) -> str:
     """ MediaFire direct link generator """
     try:
-        link = re_findall(r'\bhttps?://.*mediafire\.com\S+', url)[0]
+        link = re.findall(r'\bhttps?://.*mediafire\.com\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No MediaFire links found\n")
-    page = BeautifulSoup(rget(link).content, 'lxml')
+    page = BeautifulSoup(requests.get(link).content, 'lxml')
     info = page.find('a', {'aria-label': 'Download file'})
     return info.get('href')
 
@@ -134,27 +199,27 @@ def osdn(url: str) -> str:
     """ OSDN direct link generator """
     osdn_link = 'https://osdn.net'
     try:
-        link = re_findall(r'\bhttps?://.*osdn\.net\S+', url)[0]
+        link = re.findall(r'\bhttps?://.*osdn\.net\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No OSDN links found\n")
     page = BeautifulSoup(
-        rget(link, allow_redirects=True).content, 'lxml')
+        requests.get(link, allow_redirects=True).content, 'lxml')
     info = page.find('a', {'class': 'mirror_link'})
     link = unquote(osdn_link + info['href'])
     mirrors = page.find('form', {'id': 'mirror-select-form'}).findAll('tr')
     urls = []
     for data in mirrors[1:]:
         mirror = data.find('input')['value']
-        urls.append(re_sub(r'm=(.*)&f', f'm={mirror}&f', link))
+        urls.append(re.sub(r'm=(.*)&f', f'm={mirror}&f', link))
     return urls[0]
 
 def github(url: str) -> str:
     """ GitHub direct links generator """
     try:
-        re_findall(r'\bhttps?://.*github\.com.*releases\S+', url)[0]
+        re.findall(r'\bhttps?://.*github\.com.*releases\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No GitHub Releases links found\n")
-    download = rget(url, stream=True, allow_redirects=False)
+    download = requests.get(url, stream=True, allow_redirects=False)
     try:
         return download.headers["location"]
     except KeyError:
@@ -176,8 +241,9 @@ def letsupload(url: str) -> str:
     """ Letsupload direct link generator
     Based on https://github.com/zevtyardt/lk21
     """
+    dl_url = ''
     try:
-        link = re_findall(r'\bhttps?://.*letsupload\.io\S+', url)[0]
+        link = re.findall(r'\bhttps?://.*letsupload\.io\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No Letsupload links found\n")
     return Bypass().bypass_url(link)
@@ -206,10 +272,12 @@ def onedrive(link: str) -> str:
     link_without_query = urlparse(link)._replace(query=None).geturl()
     direct_link_encoded = str(standard_b64encode(bytes(link_without_query, "utf-8")), "utf-8")
     direct_link1 = f"https://api.onedrive.com/v1.0/shares/u!{direct_link_encoded}/root/content"
-    resp = rhead(direct_link1)
+    resp = requests.head(direct_link1)
     if resp.status_code != 302:
         raise DirectDownloadLinkException("ERROR: Unauthorized link, the link may be private")
     dl_link = resp.next.url
+    file_name = dl_link.rsplit("/", 1)[1]
+    resp2 = requests.head(dl_link)
     return dl_link
 
 def pixeldrain(url: str) -> str:
@@ -222,7 +290,7 @@ def pixeldrain(url: str) -> str:
     else:
         info_link = f"https://pixeldrain.com/api/file/{file_id}/info"
         dl_link = f"https://pixeldrain.com/api/file/{file_id}"
-    resp = rget(info_link).json()
+    resp = requests.get(info_link).json()
     if resp["success"]:
         return dl_link
     else:
@@ -245,7 +313,7 @@ def racaty(url: str) -> str:
     based on https://github.com/SlamDevs/slam-mirrorbot"""
     dl_url = ''
     try:
-        re_findall(r'\bhttps?://.*racaty\.net\S+', url)[0]
+        link = re.findall(r'\bhttps?://.*racaty\.net\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No Racaty links found\n")
     scraper = create_scraper()
@@ -263,7 +331,7 @@ def fichier(link: str) -> str:
     Based on https://github.com/Maujar
     """
     regex = r"^([http:\/\/|https:\/\/]+)?.*1fichier\.com\/\?.+"
-    gan = re_match(regex, link)
+    gan = re.match(regex, link)
     if not gan:
       raise DirectDownloadLinkException("ERROR: The link you entered is wrong!")
     if "::" in link:
@@ -274,10 +342,10 @@ def fichier(link: str) -> str:
       url = link
     try:
       if pswd is None:
-        req = rpost(url)
+        req = requests.post(url)
       else:
         pw = {"pass": pswd}
-        req = rpost(url, data=pw)
+        req = requests.post(url, data=pw)
     except:
       raise DirectDownloadLinkException("ERROR: Unable to reach 1fichier server!")
     if req.status_code == 404:
@@ -324,15 +392,15 @@ def solidfiles(url: str) -> str:
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36'
     }
-    pageSource = rget(url, headers = headers).text
-    mainOptions = str(re_search(r'viewerOptions\'\,\ (.*?)\)\;', pageSource).group(1))
+    pageSource = requests.get(url, headers = headers).text
+    mainOptions = str(re.search(r'viewerOptions\'\,\ (.*?)\)\;', pageSource).group(1))
     return jsnloads(mainOptions)["downloadUrl"]
 
 def krakenfiles(page_link: str) -> str:
     """ krakenfiles direct link generator
     Based on https://github.com/tha23rd/py-kraken
     By https://github.com/junedkh """
-    page_resp = rsession().get(page_link)
+    page_resp = requests.session().get(page_link)
     soup = BeautifulSoup(page_resp.text, "lxml")
     try:
         token = soup.find("input", id="dl-token")["value"]
@@ -356,7 +424,7 @@ def krakenfiles(page_link: str) -> str:
         "hash": dl_hash,
     }
 
-    dl_link_resp = rsession().post(
+    dl_link_resp = requests.session().post(
         f"https://krakenfiles.com/download/{hash}", data=payload, headers=headers)
 
     dl_link_json = dl_link_resp.json()
@@ -374,13 +442,13 @@ def gdtot(url: str) -> str:
     if CRYPT is None:
         raise DirectDownloadLinkException("ERROR: CRYPT cookie not provided")
 
-    match = re_findall(r'https?://(.+)\.gdtot\.(.+)\/\S+\/\S+', url)[0]
+    match = re.findall(r'https?://(.+)\.gdtot\.(.+)\/\S+\/\S+', url)[0]
 
-    with rsession() as client:
+    with requests.Session() as client:
         client.cookies.update({'crypt': CRYPT})
-        client.get(url)
+        res = client.get(url)
         res = client.get(f"https://{match[0]}.gdtot.{match[1]}/dld?id={url.split('/')[-1]}")
-    matches = re_findall('gd=(.*?)&', res.text)
+    matches = re.findall('gd=(.*?)&', res.text)
     try:
         decoded_id = b64decode(str(matches[0])).decode('utf-8')
     except:
@@ -408,7 +476,7 @@ def gen_payload(data, boundary=f'{"-"*6}_'):
     return data_string
 
 def parse_infou(data):
-    info = re_findall('>(.*?)<\/li>', data)
+    info = findall('>(.*?)<\/li>', data)
     info_parsed = {}
     for item in info:
         kv = [s.strip() for s in item.split(':', maxsplit = 1)]
@@ -426,7 +494,7 @@ def unified(url: str) -> str:
     account_login(client, url, account['email'], account['passwd'])
 
     res = client.get(url)
-    key = re_findall('"key",\s+"(.*?)"', res.text)[0]
+    key = findall('"key",\s+"(.*?)"', res.text)[0]
 
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
 
@@ -486,26 +554,26 @@ def unified(url: str) -> str:
         flink = drive_link
         info_parsed['src_url'] = url
         return flink
-
+  
 def parse_info(res, url):
     info_parsed = {}
     if 'drivebuzz' in url:
-        info_chunks = re_findall('<td\salign="right">(.*?)<\/td>', res.text)
+        info_chunks = findall('<td\salign="right">(.*?)<\/td>', res.text)
     elif 'sharer.pw' in url:
-        f = re_findall(">(.*?)<\/td>", res.text)
+        f = findall(">(.*?)<\/td>", res.text)
         info_parsed = {}
         for i in range(0, len(f), 3):
-          info_parsed[f[i].lower().replace(' ', '_')] = f[i+2]
-          return info_parsed
+            info_parsed[f[i].lower().replace(" ", "_")] = f[i + 2]
+        return info_parsed
     else:
-        info_chunks = re_findall('>(.*?)<\/td>', res.text)
+        info_chunks = findall('>(.*?)<\/td>', res.text)
     for i in range(0, len(info_chunks), 2):
         info_parsed[info_chunks[i]] = info_chunks[i+1]
     return info_parsed
   
 def udrive(url: str) -> str:
     if 'katdrive' in url:
-      client = rsession()
+      client = requests.Session()
     else:
       client = cloudscraper.create_scraper(delay=10, browser='chrome')
     
@@ -524,7 +592,7 @@ def udrive(url: str) -> str:
         
     res = client.get(url)
     info_parsed = parse_info(res, url)
-    
+
     info_parsed['error'] = False
     
     up = urlparse(url)
@@ -540,7 +608,8 @@ def udrive(url: str) -> str:
     
     try:
         res = client.post(req_url, headers=headers, data=data).json()['file']
-    except: return {'error': True, 'src_url': url}
+    except: 
+        raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
     
     if 'drivefire' in url:
         decoded_id = res.rsplit('/', 1)[-1]
@@ -555,13 +624,12 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+        gd_id = findall('gd=(.*)', res, re.DOTALL)[0]
  
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
     flink = info_parsed['gdrive_url']
-
-    return flink
+    return flink  
 
 def sharer_pw(url, forced_login=False):
     client = cloudscraper.create_scraper(delay=10, browser='chrome')
@@ -572,7 +640,7 @@ def sharer_pw(url, forced_login=False):
     })
     
     res = client.get(url)
-    token = re_findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
+    token = findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
     
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='btndirect']")
     
@@ -608,10 +676,43 @@ def sharer_pw(url, forced_login=False):
     if len(ddl_btn) and not forced_login and not 'url' in info_parsed:
         # retry download via login
         return sharer_pw(url, forced_login=True)
-      
+    
     try:
         flink = info_parsed['gdrive_link']
         return flink
     except:
         raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
+        
+ 
+def drivehubs(url: str) -> str:
+    os.chmod('/usr/src/app/chromedriver', 755)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    wd = webdriver.Chrome('/usr/src/app/chromedriver', chrome_options=chrome_options)
     
+    Ok = wd.get(url)
+    wd.find_element(By.XPATH, '//button[@id="fast"]').click()
+    sleep(15)
+    wd.switch_to.window(wd.window_handles[-1])
+    flink = wd.current_url
+    wd.close()
+    
+    if 'drive.google.com' in flink:
+      return flink
+    else:
+      raise DirectDownloadLinkException(f"ERROR! Maybe Direct Download is not working for this file !\n Retrived URL : {flink}")
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
