@@ -13,7 +13,7 @@ import re
 import os
 from time import sleep
 from base64 import b64decode
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse, unquote, parse_qs
 from json import loads as jsnloads
 from lk21 import Bypass
 from cfscrape import create_scraper
@@ -548,7 +548,7 @@ def udrive(url: str) -> str:
     if 'hubdrive' in url:
         client.cookies.update({'crypt': HUBDRIVE_CRYPT})
     if 'drivehub' in url:
-        client.cookies.update({'crypt': KATDRIVE_CRYPT})
+        client.cookies.update({'crypt': HUBDRIVE_CRYPT})
     if 'katdrive' in url:
         client.cookies.update({'crypt': KATDRIVE_CRYPT})
     if 'kolop' in url:
@@ -591,9 +591,12 @@ def udrive(url: str) -> str:
         gd_id = res.rsplit("=", 1)[-1]
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
-    else:
-        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
- 
+    try:
+      res = client.post(req_url, headers=headers, data=data).json()["file"]
+      gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+    except BaseException:
+      raise DDLException("ERROR: Try in your broswer, mostly file not found or user limit exceeded!")
+        
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
     flink = info_parsed['gdrive_url']
