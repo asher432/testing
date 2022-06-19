@@ -122,7 +122,7 @@ def yandex_disk(url: str) -> str:
     """ Yandex.Disk direct link generator
     Based on https://github.com/wldhx/yadisk-direct """
     try:
-        link = re.findall(r'\b(https?://(yadi.sk|disk.yandex.com)\S+)', url)[0][0]
+        link = re_findall(r'\b(https?://(yadi.sk|disk.yandex.com)\S+)', url)[0][0]
     except IndexError:
         return "No Yandex.Disk links found\n"
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
@@ -135,7 +135,7 @@ def uptobox(url: str) -> str:
     """ Uptobox direct link generator
     based on https://github.com/jovanzers/WinTenCermin """
     try:
-        link = re.findall(r'\bhttps?://.*uptobox\.com\S+', url)[0]
+        link = re_findall(r'\bhttps?://.*uptobox\.com\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No Uptobox links found\n")
     if UPTOBOX_TOKEN is None:
@@ -143,7 +143,7 @@ def uptobox(url: str) -> str:
         dl_url = link
     else:
         try:
-            link = re.findall(r'\bhttp?://.*uptobox\.com/dl\S+', url)[0]
+            link = re_findall(r'\bhttp?://.*uptobox\.com/dl\S+', url)[0]
             dl_url = link
         except:
             file_id = re.findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
@@ -156,7 +156,7 @@ def uptobox(url: str) -> str:
 def mediafire(url: str) -> str:
     """ MediaFire direct link generator """
     try:
-        link = re.findall(r'\bhttps?://.*mediafire\.com\S+', url)[0]
+        link = re_findall(r'\bhttps?://.*mediafire\.com\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No MediaFire links found\n")
     page = BeautifulSoup(requests.get(link).content, 'lxml')
@@ -534,7 +534,7 @@ def parse_info(res, url):
             info_parsed[f[i].lower().replace(" ", "_")] = f[i + 2]
         return info_parsed
     else:
-        info_chunks = findall('>(.*?)<\/td>', res.text)
+        info_chunks = re_findall('>(.*?)<\/td>', res.text)
     for i in range(0, len(info_chunks), 2):
         info_parsed[info_chunks[i]] = info_chunks[i+1]
     return info_parsed
@@ -592,7 +592,7 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        gd_id = findall('gd=(.*)', res, re.DOTALL)[0]
+        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
  
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
