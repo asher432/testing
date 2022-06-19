@@ -594,8 +594,8 @@ def udrive(url: str) -> str:
     try:
       res = client.post(req_url, headers=headers, data=data).json()["file"]
       gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
-    except BaseException:
-      raise DDLException("ERROR: Try in your broswer, mostly file not found or user limit exceeded!")
+    except:
+      raise DirectDownloadLinkException("ERROR: Try in your broswer, mostly file not found or user limit exceeded!")
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
