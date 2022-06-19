@@ -505,6 +505,33 @@ def udrive(url: str) -> str:
     with rsession() as client:
       if ('hubdrive' or 'drivehub') in url:
           client.cookies.update({'crypt': HUBDRIVE_CRYPT})
+          
+          res = client.get(url)
+    info_parsed = parse_info(res)
+    info_parsed['error'] = False
+    
+    up = urlparse(url)
+    req_url = f"{up.scheme}://{up.netloc}/ajax.php?ajax=download"
+    
+    file_id = url.split('/')[-1]
+    
+    data = { 'id': file_id }
+    
+    headers = {
+        'x-requested-with': 'XMLHttpRequest'
+    }
+    
+    try:
+        res = client.post(req_url, headers=headers, data=data).json()['file']
+    except: return {'error': True, 'src_url': url}
+    
+    gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+    
+    info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
+    info_parsed['src_url'] = url
+
+    return info_parsed['gdrive_url']
+  
       if ('katdrive' or 'kolop') in url:
           client.cookies.update({'crypt': KATDRIVE_CRYPT})
       if 'drivefire' in url:
@@ -531,10 +558,7 @@ def udrive(url: str) -> str:
     if 'drivefire' in url:
       decoded_id = res.rsplit('/', 1)[-1]
       info_parsed = f"https://drive.google.com/file/d/{decoded_id}"
-      if not info_parsed['error']:
-        return info_parsed
-      else:
-        raise DirectDownloadLinkException(f"{info_parsed['error_message']}")
+      return info_parsed
     else:
       gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
     
