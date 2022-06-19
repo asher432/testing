@@ -126,7 +126,7 @@ def _clone(message, bot, multi=0):
         else:
             sendMarkup(result + cc, bot, message, button)
             LOGGER.info(f"Cloning Done: {name}")
-        if (is_gdtot or is_appdrive or is_gdflix or is_driveapp or is_driveace or is_drivelinks or is_drivebit or is_drivesharer or is_hubdrive or is_drivehub or is_katdrive or is_kolop or is_drivefire):
+        if (is_gdtot or  is_unified or is_udrive or is_sharer):
             gd.deletefile(link)
         if MIRROR_LOGS:
             try:
