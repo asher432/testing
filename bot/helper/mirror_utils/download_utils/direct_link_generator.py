@@ -532,10 +532,10 @@ def udrive(url: str) -> str:
 
     return info_parsed['gdrive_url']
   
-      if ('katdrive' or 'kolop') in url:
-          client.cookies.update({'crypt': KATDRIVE_CRYPT})
-      if 'drivefire' in url:
-          client.cookies.update({'crypt': DRIVEFIRE_CRYPT})
+    if ('katdrive' or 'kolop') in url:
+      client.cookies.update({'crypt': KATDRIVE_CRYPT})
+    if 'drivefire' in url:
+      client.cookies.update({'crypt': DRIVEFIRE_CRYPT})
     res = client.get(url)
     info_parsed = parse_info(res)
     info_parsed['error'] = False
