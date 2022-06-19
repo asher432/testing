@@ -587,7 +587,7 @@ def udrive(url: str) -> str:
         client.cookies.update({'crypt': DRIVEFIRE_CRYPT})
 
     res = client.get(url)
-    info_parsed = parse_info(res(url))
+    info_parsed = parse_info(res)
     info_parsed['error'] = False
 
     up = urlparse(url)
