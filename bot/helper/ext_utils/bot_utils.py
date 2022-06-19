@@ -16,9 +16,8 @@ MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
 
 URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 
-COUNT = 0
-PAGE_NO = 1
-
+FINISHED_PROGRESS_STR = "▓"
+UNFINISHED_PROGRESS_STR = "░"
 
 class MirrorStatus:
     STATUS_UPLOADING = "Uploading...📤"
@@ -32,6 +31,8 @@ class MirrorStatus:
     STATUS_SPLITTING = "Splitting...✂️"
     STATUS_CHECKING = "CheckingUp...📝"
     STATUS_SEEDING = "Seeding...🌧"
+    
+PROGRESS_MAX_SIZE = 100 // 8
 
 SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
@@ -64,79 +65,6 @@ def get_readable_file_size(size_in_bytes) -> str:
         return f'{round(size_in_bytes, 2)}{SIZE_UNITS[index]}'
     except IndexError:
         return 'File too large'
-
-ONE, TWO, THREE = range(3)
-
-def refresh(update, context):
-    query = update.callback_query
-    query.edit_message_text(text="Refreshing Status...")
-    time.sleep(2)
-    update_all_messages()
-    
-def close(update, context):
-    chat_id = update.effective_chat.id
-    user_id = update.callback_query.from_user.id
-    bot = context.bot
-    query = update.callback_query
-    admins = bot.get_chat_member(chat_id, user_id).status in ['creator', 'administrator'] or user_id in [OWNER_ID]
-    if admins:
-        delete_all_messages()
-    else:
-        query.amswer(text="You Don't have Admin Rights!", show_alert=True)
-        
-def pop_up_stats(update, context):
-    query = update.callback_query
-    stats = bot_sys_stats()
-    query.answer(text=stats, show_alert=True)
-    
-def bot_sys_stats():
-    currentTime = get_readable_time(time() - botStartTime)
-    cpu = psutil.cpu_percent()
-    mem = psutil.virtual_memory().percent
-    disk= psutil.disk_usage('/').percent
-    total, used, free, disk= shutil.disk_usage('.')
-    total = get_readable_file_size(total)
-    used = get_readable_file_size(used)
-    free = get_readable_file_size(free)
-    sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
-    recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
-    stats = f"""
-BOT UPTIME : [currentTime]
-
-CPU : (progress_bar(cpu)) (cpu)%
-RAM : (progress_bar(mem)) (mem)%
-
-DISK : (progress_bar(disk)) (disk)%
-TOTAL : (total)
-
-USED : (used) | | FREE : (free)
-SENT : (sent) | | RECV : (recv)
-"""
-    return stats
-    
-dispatcher.add_handler(CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$'))
-dispatcher.add_handler(CallbackQueryHandler(close, pattern='^' + str(TWO) + '$'))
-dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$'))
-bmsg += f"<b>RAM : </b> {virtual_memory().percent} | <b>UPTIME :</b> {currentTime}\n"
-bmsg += f"<b>DL : </b> {dlspeed}/s | {recv}\n"
-bmsg += f"<b>UL : </b> {dlspeed}/s | {recv}\n"
-buttons = ButtonMaker()
-buttons.sbutton("Refresh", str(ONE))
-buttons.sbutton("Stats", str(THREE))
-buttons.sbutton("Close", str(TWO))
-sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
-
-if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-    msg += f"\n<b>Page : </b> <code>{PAGE_NO}</code>/<code>{PAGES}</code>\m\m"
-    buttons = ButtonMaker()
-    buttons.sbutton("Previous Page", "pre")
-    buttons.sbutton("Refresh", str(ONE))
-    buttons.sbutton("Next Page", "nex")
-    buttons.sbutton("Stats", str(THREE))
-    buttons.sbutton("Close", str(THREE))
-    buttons = InlineKeyboardMarkup(buttons.build_menu(3))
-    return msg + bmsg, button
-return msg + bmsg, sbutton
     
 def getDownloadByGid(gid):
     with download_dict_lock:
@@ -183,6 +111,29 @@ def get_progress_bar_string(status):
     p_str += '' * (18 - cFull)
     p_str = f"[{p_str}]"
     return p_str
+
+def progress_bar(percentage):
+    """Returns a progress bar for download
+    """
+    #percentage is on the scale of 0-1
+    comp = FINISHED_PROGRESS_STR
+    ncomp = UNFINISHED_PROGRESS_STR
+    pr = ""
+
+    if isinstance(percentage, str):
+        return "NaN"
+
+    try:
+        percentage=int(percentage)
+    except:
+        percentage = 0
+
+    for i in range(1,11):
+        if i <= int(percentage/10):
+            pr += comp
+        else:
+            pr += ncomp
+    return pr
 
 def get_readable_message():
     with download_dict_lock:
