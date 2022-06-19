@@ -535,7 +535,7 @@ def udrive(url: str) -> str:
       else:
         raise DirectDownloadLinkException(f"{info_parsed['error_message']}")
     else:
-      gd_id = re_findall('gd=(.*)', res, re_DOTALL)[0]
+      gd_id = re_findall('gd=(.*)', res.text)
     
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
