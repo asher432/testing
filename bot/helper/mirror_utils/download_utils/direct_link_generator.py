@@ -525,11 +525,15 @@ def udrive(url: str) -> str:
     
     try:
         res = client.post(req_url, headers=headers, data=data).json()['file']
-    except: 
-      return {'error': True, 'src_url': url}
-    
-    if 'drivefire.co' in url:
-      return res
+    except: return {'error': True, 'src_url': url}
+   
+    if 'drivefire' in url:
+      decoded_id = res.rsplit('/', 1)[-1]
+      info_parsed = f"https://drive.google.com/file/d/{decoded_id}"
+      if not info_parsed['error']:
+        return info_parsed
+      else:
+        raise DirectDownloadLinkException(f"{info_parsed['error_message']}")
     else:
       gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
     
