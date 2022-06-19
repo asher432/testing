@@ -8,6 +8,7 @@ from https://github.com/AvinashReddy3108/PaperplaneExtended . I hereby take no c
 than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtended/commits/master/userbot/modules/direct_links.py
 for original authorship. """
 
+import re
 from requests import get as rget, head as rhead, post as rpost, Session as rsession
 from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search
 from base64 import b64decode
@@ -535,7 +536,7 @@ def udrive(url: str) -> str:
       else:
         raise DirectDownloadLinkException(f"{info_parsed['error_message']}")
     else:
-      gd_id = re_findall('gd=(.*)', res.text)
+      gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
     
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
