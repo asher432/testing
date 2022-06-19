@@ -1,31 +1,3 @@
-Skip to content
-Search or jump to…
-Pulls
-Issues
-Marketplace
-Explore
- 
-@Shamanth2572 
-majnurangeela
-/
-mirror-hunter-upstream
-Public template
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-mirror-hunter-upstream/bot/helper/mirror_utils/download_utils/direct_link_generator.py /
-@majnurangeela
-majnurangeela Update direct_link_generator.py
-Latest commit b182cb2 3 days ago
- History
- 1 contributor
-677 lines (596 sloc)  25.3 KB
-
 # Copyright (C) 2019 The Raphielscape Company LLC.
 #
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
@@ -703,16 +675,3 @@ def drivehubs(url: str) -> str:
       return flink
     else:
       raise DirectDownloadLinkException(f"ERROR! Maybe Direct Download is not working for this file !\n Retrived URL : {flink}")
-© 2022 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Loading complete
