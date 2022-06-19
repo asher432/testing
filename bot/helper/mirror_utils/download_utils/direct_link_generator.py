@@ -587,7 +587,7 @@ def udrive(url: str) -> str:
         client.cookies.update({'crypt': DRIVEFIRE_CRYPT})
 
     res = client.get(url)
-    info_parsed = parse_info(res, url)
+    info_parsed = parse_info(res(url))
     info_parsed['error'] = False
 
     up = urlparse(url)
@@ -641,7 +641,7 @@ def sharer_pw(url, forced_login=False):
 
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='btndirect']")
 
-    info_parsed = parse_info(res, url)
+    info_parsed = parse_info(res(url))
     info_parsed['error'] = True
     info_parsed['src_url'] = url
     info_parsed['link_type'] = 'login'  # direct/login
