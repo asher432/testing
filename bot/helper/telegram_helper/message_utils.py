@@ -238,11 +238,14 @@ def get_readable_message():
                     upspeed_bytes += float(spd.split('M')[0]) * 1048576
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
         
-        buttons = ButtonMaker()
-        buttons.sbutton("Refresh", callback_data=str(ONE))
-        buttons.sbutton("Close", callback_data=str(TWO))
-        buttons.sbutton("Statistics", callback_data=str(THREE))
-        sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
+        try:
+            keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                        InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),
+                        InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]
+                        editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+        except Exception as e:
+            LOGGER.error(str(e))
+        status_reply_dict[chat_id].text = msg
         
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"<b>Tasks:</b> {tasks}\n"
