@@ -20,7 +20,6 @@ from cfscrape import create_scraper
 from bs4 import BeautifulSoup
 from base64 import standard_b64encode
 from lxml import etree
-import cloudscraper
 from bot import LOGGER, UPTOBOX_TOKEN,GDTOT_CRYPT, UNIFIED_EMAIL, UNIFIED_PASS, HUBDRIVE_CRYPT, KATDRIVE_CRYPT, DRIVEFIRE_CRYPT
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.ext_utils.bot_utils import *
