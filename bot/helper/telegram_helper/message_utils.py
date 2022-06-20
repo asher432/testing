@@ -301,6 +301,70 @@ def sendStatusMessage(msg, bot):
             message = sendMarkup(progress, bot, msg, buttons)
         status_reply_dict[msg.chat.id] = message
 
+def refresh(update, context):
+    query = update.callback_query
+    query.edit_message_text(text="Refreshing Status...Please Wait!")
+    time.sleep(2)
+    update_all_messages()
+    
+def close(update, context):
+    chat_id  = update.effective_chat.id
+    user_id = update.callback_query.from_user.id
+    bot = context.bot
+    query = update.callback_query
+    admins = bot.get_chat_member(chat_id, user_id).status in ['creator', 'administrator'] or user_id in [OWNER_ID]
+    if admins:
+        delete_all_messages()
+    else:
+        query.answer(text="Why are you gay!!", show_alert=True)
+        
+def pop_up_stats(update, context):
+    query = update.callback_query
+    stats = bot_sys_stats()
+    query.answer(text=stats, show_alert=True)
+
+def bot_sys_stats():
+    currentTime = get_readable_time(time.time() - botStartTime)
+    cpu = psutil.cpu_percent()
+    mem = psutil.virtual_memory().percent
+    disk = psutil.disk_usage("/").percent
+    total, used, free, disk= disk_usage('/')
+    total = get_readable_file_size(total)
+    used = get_readable_file_size(used)
+    free = get_readable_file_size(free)
+    recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
+    sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
+    num_active = 0
+    num_upload = 0
+    num_split = 0
+    num_extract = 0
+    num_archi = 0
+    tasks = len(download_dict)
+    for stats in list(download_dict.values()):
+       if stats.status() == MirrorStatus.STATUS_DOWNLOADING:
+                num_active += 1
+       if stats.status() == MirrorStatus.STATUS_UPLOADING:
+                num_upload += 1
+       if stats.status() == MirrorStatus.STATUS_ARCHIVING:
+                num_archi += 1
+       if stats.status() == MirrorStatus.STATUS_EXTRACTING:
+                num_extract += 1
+       if stats.status() == MirrorStatus.STATUS_SPLITTING:
+                num_split += 1
+    stats = f"""<b>
+═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════
+ʙᴏᴛ ᴜᴘᴛɪᴍᴇ : {currentTime}
+ᴄᴘᴜ : {progress_bar(cpu)} {cpu}%
+ʀᴀᴍ : {progress_bar(mem)} {mem}%
+ᴅɪsᴋ : {progress_bar(disk)} {disk}%
+ᴛᴏᴛᴀʟ : {total}
+ᴜsᴇᴅ : {used} || ғʀᴇᴇ : {free}
+sᴇɴᴛ : {sent} || ʀᴇᴄᴠ : {recv}</b>
+"""
+    return stats
+
 dispatcher.add_handler(
     CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$")
+    CallbackQueryHandler(refresh, pattern="^" + str(ONE) + "$")
+    CallbackQueryHandler(close, pattern="^" + str(TWO) + '$')
 )
