@@ -6,7 +6,7 @@ from time import time
 from sys import executable
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import *
-
+import shutil
 from bot import bot, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, LOGGER, Interval, INCOMPLETE_TASK_NOTIFIER, DB_URI, alive, app, main_loop
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.ext_utils.telegraph_helper import telegraph
@@ -28,7 +28,7 @@ def stats(update, context):
         last_commit = 'No UPSTREAM_REPO'
     currentTime = get_readable_time(time.time() - botStartTime)
     osUptime = get_readable_time(time.time() - boot_time())
-    total, used, free, disk= psutil.disk_usage('/')
+    total, used, free, disk= shutil.disk_usage('.')
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
