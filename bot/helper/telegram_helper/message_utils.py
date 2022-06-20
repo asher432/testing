@@ -250,31 +250,40 @@ def get_readable_message():
 
 def update_all_messages():
     currentTime = get_readable_time((time.time() - botStartTime))
-    msg, buttons = get_readable_message()
+    msg = get_readable_message()
+    msg += f"<b>▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</b>\n\n" \
+           f"<b>BOT UPTIME :</b> <b>{currentTime}</b>\n\n"
+    with download_dict_lock:
+        dlspeed_bytes = 0
+        uldl_bytes = 0
+        for download in list(download_dict.values()):
+            speedy = download.speed()
+            if download.status() == MirrorStatus.STATUS_DOWNLOADING:
+                if 'K' in speedy:
+                    dlspeed_bytes += float(speedy.split('K')[0]) * 1024
+                elif 'M' in speedy:
+                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
+            if download.status() == MirrorStatus.STATUS_UPLOADING:
+                if 'K' in speedy:
+            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
+                elif 'M' in speedy:
+                    uldl_bytes += float(speedy.split('M')[0]) * 1048576
+        dlspeed = get_readable_file_size(dlspeed_bytes)
+        ulspeed = get_readable_file_size(uldl_bytes)
+        msg += f"<b>DL :</b> <b>{dlspeed}ps</b> || <b>UL :</b> <b>{ulspeed}ps</b>\n"
     with status_reply_dict_lock:
         for chat_id in list(status_reply_dict.keys()):
             if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
                 if len(msg) == 0:
                     msg = "Starting DL"
-                    if buttons == "":
-                        editMessage(msg, status_reply_dict[chat_id])
-                    elif STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-                        msg += f"<b>Tasks:</b> {tasks}\n"
-                        buttons = ButtonMaker()
-                        buttons.sbutton("Prev", "status pre")
-                        buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
-                        buttons.sbutton("Next", "status nex")
-                        button = InlineKeyboardMarkup(buttons.build_menu(3))
-                        editMessage(msg, status_reply_dict[chat_id], buttons)
-                    else:
-                        try:
-                            keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                                        InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),
-                                        InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE))]
-                            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-                        except Exception as e:
-                            LOGGER.error(str(e))
-                    status_reply_dict[chat_id].text = msg
+                try:
+                    keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                                 InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
+                                [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
+                    editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+                except Exception as e:
+                    LOGGER.error(str(e))
+                status_reply_dict[chat_id].text = msg
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
