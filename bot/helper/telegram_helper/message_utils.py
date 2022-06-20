@@ -2,6 +2,7 @@ from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext, CallbackQueryHandler
 from telegram.message import Message
 from telegram.update import Update
+from math import ceil
 import time
 from time import sleep
 import psutil, shutil
