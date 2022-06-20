@@ -116,7 +116,7 @@ def get_progress_bar_string(status):
     cFull = p // 8
     cPart = p % 8 - 1
     p_str = FINISHED_PROGRESS_STR * cFull
-    if cPart >=0
+    if cPart >=0:
       p_str += FINISHED_PROGRESS_STR
     p_str += UNFINISHED_PROGRESS_STR * (PROGRESS_MAX_SIZE - cFull)
     p_str = f"[{p_str}]"
