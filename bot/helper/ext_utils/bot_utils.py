@@ -396,6 +396,8 @@ CPU: {cpu}% | RAM: {mem}%
 Disk: {total} | Free: {free}
 Used: {disk}% is {used}
 
-Ark Mirror
+f"With ❤️ Ark Mirror"
 """
     return stats
+
+dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
