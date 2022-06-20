@@ -256,25 +256,25 @@ def update_all_messages():
             if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
                 if len(msg) == 0:
                     msg = "Starting DL"
-                        if buttons == "":
-                            editMessage(msg, status_reply_dict[chat_id])
-                        elif STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-                            msg += f"<b>Tasks:</b> {tasks}\n"
-                            buttons = ButtonMaker()
-                            buttons.sbutton("Prev", "status pre")
-                            buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
-                            buttons.sbutton("Next", "status nex")
-                            button = InlineKeyboardMarkup(buttons.build_menu(3))
-                            editMessage(msg, status_reply_dict[chat_id], buttons)
-                        else:
-                            try:
-                                keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                                            InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),
-                                            InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE))]
-                                editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-                            except Exception as e:
-                                LOGGER.error(str(e))
-                        status_reply_dict[chat_id].text = msg
+                    if buttons == "":
+                        editMessage(msg, status_reply_dict[chat_id])
+                    elif STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
+                        msg += f"<b>Tasks:</b> {tasks}\n"
+                        buttons = ButtonMaker()
+                        buttons.sbutton("Prev", "status pre")
+                        buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
+                        buttons.sbutton("Next", "status nex")
+                        button = InlineKeyboardMarkup(buttons.build_menu(3))
+                        editMessage(msg, status_reply_dict[chat_id], buttons)
+                    else:
+                        try:
+                            keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                                        InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),
+                                        InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE))]
+                            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+                        except Exception as e:
+                            LOGGER.error(str(e))
+                    status_reply_dict[chat_id].text = msg
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
