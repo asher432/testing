@@ -6,7 +6,7 @@ from telegram.ext import CallbackContext, CallbackQueryHandler
 from telegram.error import RetryAfter, TimedOut, BadRequest
 from pyrogram.errors import FloodWait
 from telegram.update import Update
-
+import psutil 
 from bot import *
 from bot.helper.ext_utils.bot_utils import *
 
@@ -197,7 +197,7 @@ def bot_sys_stats():
     cpu = psutil.cpu_percent()
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
-    total, used, free = shutil.disk_usage('.')
+    total, used, free = psutil.disk_usage('.')
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
