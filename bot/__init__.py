@@ -22,8 +22,6 @@ faulthandler_enable()
 
 setdefaulttimeout(600)
 
-botStartTime = time()
-
 basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     handlers=[FileHandler('log.txt'), StreamHandler()],
                     level=INFO)
