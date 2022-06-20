@@ -27,7 +27,7 @@ class TgUploader:
         self.uploaded_bytes = 0
         self._last_uploaded = 0
         self.__listener = listener
-        self.__start_time = time()
+        self.__start_time = time.time()
         self.__total_files = 0
         self.__is_cancelled = False
         self.__as_doc = AS_DOCUMENT
@@ -208,7 +208,7 @@ class TgUploader:
     def speed(self):
         with self.__resource_lock:
             try:
-                return self.uploaded_bytes / (time() - self.__start_time)
+                return self.uploaded_bytes / (time.time() - self.__start_time)
             except ZeroDivisionError:
                 return 0
 
