@@ -1,10 +1,8 @@
-from logging import getLogger, WARNING
-import time
-import threading
-from time import time
+from logging import *
+import time import *
+import threading import *
 from threading import RLock, Lock
-from pyrogram import Client, enums
-
+from pyrogram import *
 from bot import LOGGER, download_dict, download_dict_lock, STOP_DUPLICATE, STORAGE_THRESHOLD, app
 from bot.helper.ext_utils.bot_utils import get_readable_file_size
 from .download_helper import DownloadHelper
@@ -13,23 +11,26 @@ from bot.helper.telegram_helper.message_utils import sendMarkup, sendMessage, se
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.ext_utils.fs_utils import check_storage_threshold
 
-global_lock = Lock()
+global_lock = threading.Lock()
 GLOBAL_GID = set()
-getLogger("pyrogram").setLevel(WARNING)
+logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 class TelegramDownloadHelper(DownloadHelper):
     def __init__(self, listener):
         super().__init__()
-        self.name = ""
-        self.size = 0
-        self.progress = 0
-        self.downloaded_bytes = 0
-        self.__start_time = time()
         self.__listener = listener
-        self.__id = ""
-        self.__is_cancelled = False
         self.__resource_lock = threading.RLock()
-
+        self.name = ""
+        self.__start_time = time()
+        self.__id = ""
+        self.__bot = app
+        self.__is_cancelled = False
+        
+    @property
+    def id(self):
+        with self.__resource_lock:
+            return self.__gid
+        
     @property
     def download_speed(self):
         with self.__resource_lock:
@@ -106,9 +107,9 @@ class TelegramDownloadHelper(DownloadHelper):
                     LOGGER.info('Checking File/Folder if already in Drive...')
                     smsg, button = GoogleDriveHelper().drive_list(name, True, True)
                     if smsg:
-                        msg = "File/Folder is already available in Drive.\nHere are the search results:"
-                        self.__onEventEnd()
-                        return sendMarkup(msg, self.__listener.bot, self.__listener.message, button)
+                        sendMarkup("File/Folder is already available in Drive.\nHere are the search results:", self.__listener.bot, self.__listener.message, button)
+                        return 
+                    #sendMarkup(msg, self.__listener.bot, self.__listener.message, button)
                 if STORAGE_THRESHOLD is not None:
                     arch = any([self.__listener.isZip, self.__listener.extract])
                     acpt = check_storage_threshold(size, arch)
