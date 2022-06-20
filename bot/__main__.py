@@ -19,7 +19,8 @@ from .helper.telegram_helper.button_build import ButtonMaker
 
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, count, leech_settings, search, rss
 
-now = datetime.now(pytz.timezone('Asia/kolkata'))
+seconds= time.time()
+now = time.ctime(seconds + 19800)
 
 def stats(update, context):
     global main
