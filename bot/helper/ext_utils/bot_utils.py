@@ -106,6 +106,8 @@ def getAllDownload(req_status: str):
                     return dl
     return None
 
+FINISHED_PROGRESS_STR = "▓"
+UNFINISHED_PROGRESS_STR = "░"
 PROGRESS_MAX_SIZE = 100 // 8
 
 def get_progress_bar_string(status):
