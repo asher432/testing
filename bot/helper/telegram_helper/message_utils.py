@@ -12,6 +12,9 @@ from bot.helper.ext_utils.bot_utils import get_readable_message, get_readable_fi
 from telegram.error import TimedOut, BadRequest, RetryAfter
 from pyrogram.errors import FloodWait
 
+COUNT = 0
+PAGE_NO = 1
+
 def sendMessage(text: str, bot, message: Message):
     try:
         return bot.sendMessage(message.chat_id,
@@ -24,6 +27,28 @@ def sendMessage(text: str, bot, message: Message):
     except Exception as e:
         LOGGER.error(str(e))
         return
+
+def turn(data):
+    try:
+        with download_dict_lock:
+            global COUNT, PAGE_NO
+            if data[1] == "nex":
+                if PAGE_NO == pages:
+                    COUNT = 0
+                    PAGE_NO = 1
+                else:
+                    COUNT += STATUS_LIMIT
+                    PAGE_NO += 1
+            elif data[1] == "pre":
+                if PAGE_NO == 1:
+                    COUNT = STATUS_LIMIT * (pages - 1)
+                    PAGE_NO = pages
+                else:
+                    COUNT -= STATUS_LIMIT
+                    PAGE_NO -= 1
+        return True
+    except:
+        return False
 
 def sendMarkup(text: str, bot, message: Message, reply_markup: InlineKeyboardMarkup):
     try:
