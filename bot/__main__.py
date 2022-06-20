@@ -67,7 +67,8 @@ def call_back_data(update, context):
     global main
     query = update.callback_query
     query.answer()
-    main.delete()
+    if main:
+        main.delete()
     main = None   
     
 def start(update:Update, context:CallbackContext) -> None:
