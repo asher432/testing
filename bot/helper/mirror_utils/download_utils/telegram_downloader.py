@@ -1,4 +1,5 @@
 from logging import getLogger, WARNING
+import time
 from time import time
 from threading import RLock, Lock
 from pyrogram import Client, enums
