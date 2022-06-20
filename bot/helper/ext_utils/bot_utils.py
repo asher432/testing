@@ -354,16 +354,18 @@ def get_content_type(link: str) -> str:
     return content_type
 
 ONE, TWO, THREE = range(3)
+
 def pop_up_stats(update, context):
     query = update.callback_query
     stats = bot_sys_stats()
     query.answer(text=stats, show_alert=True)
+    
 def bot_sys_stats():
     currentTime = get_readable_time(time.time() - botStartTime)
     cpu = psutil.cpu_percent()
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage(DOWNLOAD_DIR).percent
-    total, used, free = shutil.disk_usage(DOWNLOAD_DIR)
+    total, used, free = psutil.disk_usage(DOWNLOAD_DIR)
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
@@ -386,16 +388,15 @@ def bot_sys_stats():
                 num_extract += 1
        if stats.status() == MirrorStatus.STATUS_SPLITTING:
                 num_split += 1
-    stats = f"Bot Statistics"
+    stats = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>"
     stats += f"""
-
-Bot Uptime: {currentTime}
-DOWN: {recv} | UP: {sent}
-CPU: {cpu}% | RAM: {mem}%
-Disk: {total} | Free: {free}
-Used: {disk}% is {used}
-
-f"With ❤️ Ark Mirror"
+ʙᴏᴛ ᴜᴘᴛɪᴍᴇ : {currentTime}
+ᴄᴘᴜ : {progress_bar(cpu)} {cpu}%
+ʀᴀᴍ : {progress_bar(mem)} {mem}%
+ᴅɪsᴋ : {progress_bar(disk)} {disk}%
+ᴛᴏᴛᴀʟ : {total}
+ᴜsᴇᴅ : {used} || ғʀᴇᴇ : {free}
+sᴇɴᴛ : {sent} || ʀᴇᴄᴠ : {recv}</b>
 """
     return stats
 
