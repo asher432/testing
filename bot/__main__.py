@@ -70,7 +70,7 @@ def call_back_data(update, context):
     main.delete()
     main = None   
     
-def start(update:Update, context:CallbackContent) -> None:
+def start(update:Update, context:CallbackContext) -> None:
     buttons = ButtonMaker()
     buttons.buildbutton("Repo", "https://github.com/arkonn/Ark-Mirror")
     buttons.buildbutton("Join Group", "https://t.me/arkmirror")
