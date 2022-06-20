@@ -185,7 +185,7 @@ def close(update, context):
     if admins:
         delete_all_messages()
     else:
-        query.answer(text="You Don't Have Admin Rights!", show_alert=True)
+        query.answer(text="Why are you gay!!", show_alert=True)
         
 def pop_up_stats(update, context):
     query = update.callback_query
