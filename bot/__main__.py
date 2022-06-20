@@ -237,7 +237,7 @@ def main():
                                         for i in AUTHORIZED_CHATS:
                                             bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
                                  except Exception as e:
-                                     LOGGER.error(e)
+                                    LOGGER.error(e)
                              msg = ''
                              bot.sendMessage(cid, msg, 'HTML')
                              msg = ''
