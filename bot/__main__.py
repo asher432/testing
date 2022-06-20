@@ -61,7 +61,7 @@ def stats(update, context):
             f'<b>SERVER STATS</b>\n' \
             f'<b><i>CPU</i></b>: {cpuUsage}%\n' \
             f'<b><i>RAM</i></b>: {memory}%\n' \
-            f'<b><i>SWAP</i></b>: {swap_t} || <b><i>USED</i></b>: {swap_p}%\n'\
+            f'<b><i>SWAP</i></b>: {swap_t} || <b><i>USED</i></b>: {swap_p}%\n'
     keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
     main = sendMarkup(stats, context.bot, update, reply_markup=InlineKeyboardMarkup(keyboard))
 
