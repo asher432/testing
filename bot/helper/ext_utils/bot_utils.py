@@ -8,16 +8,16 @@ import shutil
 from shutil import *
 from requests import head as rhead
 from urllib.request import urlopen
-from telegram import InlineKeyboardMarkup
+from telegram import *
 
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot import download_dict, download_dict_lock, STATUS_LIMIT, botStartTime, DOWNLOAD_DIR
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
-from telegram.error import RetryAfter
-from telegram.ext import CallbackQueryHandler
-from telegram.message import Message
-from telegram.update import Update
+from telegram.error import *
+from telegram.ext import *
+from telegram.message import *
+from telegram.update import *
 from bot import *
 
 MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
