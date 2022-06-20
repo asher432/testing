@@ -7,9 +7,9 @@ from telegram.error import RetryAfter, TimedOut, BadRequest
 from pyrogram.errors import FloodWait
 from telegram.update import Update
 import psutil 
-from bot import *
-from bot.helper.ext_utils.bot_utils import setinterval
-from bot.helper.ext_utils.bot_utils import *
+from bot import AUTO_DELETE_MESSAGE_DURATION, LOGGER, status_reply_dict, status_reply_dict_lock, \
+                Interval, DOWNLOAD_STATUS_UPDATE_INTERVAL, RSS_CHAT_ID, bot, rss_session
+from bot.helper.ext_utils.bot_utils import setInterval, get_readable_message
 
 def sendMessage(text: str, bot, message: Message):
     try:
