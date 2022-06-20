@@ -24,7 +24,7 @@ class TelegramDownloadHelper(DownloadHelper):
         self.size = 0
         self.progress = 0
         self.downloaded_bytes = 0
-        self.__start_time = time.time()
+        self.__start_time = time()
         self.__listener = listener
         self.__id = ""
         self.__is_cancelled = False
