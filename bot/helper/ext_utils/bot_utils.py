@@ -150,6 +150,8 @@ def progress_bar(percentage):
             pr += ncomp
     return pr
 
+ONE, TWO, THREE = range(3)
+
 def get_readable_message():
     with download_dict_lock:
         msg = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>\n\n"
@@ -230,6 +232,8 @@ def get_readable_message():
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
         
         buttons = ButtonMaker()
+        buttons.sbutton("Refresh", str(ONE))
+        buttons.sbutton("Close“, str(TWO))
         buttons.sbutton("Statistics", str(THREE))
         sbutton = InlineKeyboardMarkup(buttons.build_menu(1))
         
