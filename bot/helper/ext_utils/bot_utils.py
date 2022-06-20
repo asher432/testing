@@ -234,7 +234,7 @@ def get_readable_message():
         
         buttons = ButtonMaker()
         buttons.sbutton("Refresh", str(ONE))
-        buttons.sbutton("Close“, str(TWO))
+        buttons.sbutton("Clear“, str(TWO))
         buttons.sbutton("Statistics", str(THREE))
         sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
         
