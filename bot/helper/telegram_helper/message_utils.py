@@ -26,6 +26,7 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 
 COUNT = 0
 PAGE_NO = 1
+ONE, TWO, THREE = range(3)
 
 def sendMessage(text: str, bot, message: Message):
     try:
