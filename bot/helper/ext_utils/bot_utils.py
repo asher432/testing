@@ -3,7 +3,7 @@ from threading import Thread, Event
 from time import time
 from math import ceil
 from html import escape
-from psutil import virtual_memory, cpu_percent, disk_usage
+from psutil import *
 from requests import head as rhead
 from urllib.request import urlopen
 from telegram import InlineKeyboardMarkup
@@ -11,6 +11,9 @@ from telegram import InlineKeyboardMarkup
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot import download_dict, download_dict_lock, STATUS_LIMIT, botStartTime, DOWNLOAD_DIR
 from bot.helper.telegram_helper.button_build import ButtonMaker
+
+from telegram import RetryAfter, CallbackQueryHandler, Message, Update
+from bot import *
 
 MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
 
@@ -363,6 +366,3 @@ Used: {disk}% is {used}
 Ark Mirror
 """
     return stats
-dispatcher.add_handler(
-    CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$")
-)
