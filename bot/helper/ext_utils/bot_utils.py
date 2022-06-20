@@ -231,7 +231,7 @@ def get_readable_message():
         if tasks is not None and tasks < STATUS_LIMIT:
             buttons = ButtonMaker()
             buttons.sbutton("Refresh", str(ONE))
-            buttond.sbutton("Close", str(TWO))
+            buttons.sbutton("Close", str(TWO))
             buttons.sbutton("Statistics", str(THREE))
             button = InlineKeyboardMarkup(buttons.build_menu(3))
             return button
