@@ -1,4 +1,5 @@
-from time import sleep
+from time import sleep, time
+import time
 from telegram import InlineKeyboardMarkup
 from telegram.message import Message
 from telegram.error import RetryAfter
