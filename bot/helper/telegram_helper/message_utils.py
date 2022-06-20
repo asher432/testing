@@ -8,7 +8,7 @@ from pyrogram.errors import FloodWait
 from telegram.update import Update
 import psutil 
 from bot import *
-from bot.helper.ext_utils.bot_utils import *
+from bot.helper.ext_utils.bot_utils import get_readable_message, setInterval
 
 
 def sendMessage(text: str, bot, message: Message):
@@ -150,7 +150,7 @@ def update_all_messages():
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
-        Interval.append(__setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
+        Interval.append(setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
     progress, buttons = get_readable_message()
     with status_reply_dict_lock:
         if msg.chat.id in list(status_reply_dict.keys()):
