@@ -47,7 +47,7 @@ def stats(update, context):
     mem_u = get_readable_file_size(memory.used)
     stats = f"〣 Ark Mirror 〣\n\n" \
             f'<b>Commit Date:</b> {last_commit}\n'\
-            f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n' \
+            f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n\n' \
             f'<b>DISK INFO</b>\n' \
             f'<b><i>Total</i></b>: {total}\n' \
             f'<b><i>Used</i></b>: {used} ~ ' \
@@ -57,8 +57,9 @@ def stats(update, context):
             f'<b><i>DL</i></b>: {recv}\n\n' \
             f'<b>SERVER STATS</b>\n' \
             f'<b><i>CPU</i></b>: {cpuUsage}%\n' \
-            f'<b><i>RAM</i></b>: {memory}%\n' \
-            f'<b><i>SWAP</i></b>: {swap_t} || <b><i>USED</i></b>: {swap_p}%\n'
+            f'<b><i>RAM</i></b>: {mem_p}%\n' \
+            f'<b><i>SWAP</i></b>: {swap_t} ~ ' \
+            f'<b><i>USED</i></b>: {swap_p}%'
     keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
     main = sendMarkup(stats, context.bot, update.message, reply_markup=InlineKeyboardMarkup(keyboard))
 
