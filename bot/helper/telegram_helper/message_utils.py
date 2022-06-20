@@ -8,6 +8,7 @@ from pyrogram.errors import FloodWait
 from telegram.update import Update
 import psutil 
 from bot import *
+from bot.helper.ext_utils.bot_utils import setinterval
 from bot.helper.ext_utils.bot_utils import *
 
 def sendMessage(text: str, bot, message: Message):
