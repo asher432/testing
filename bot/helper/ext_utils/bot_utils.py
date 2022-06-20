@@ -199,9 +199,9 @@ def get_readable_message():
                 msg += f"\n<b>To Cancel : </b><code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             elif download.status() == MirrorStatus.STATUS_SEEDING:
                 msg += f"\n<b>Size : </b>{download.size()}"
-                msg += f"\n<b>Engine :</b> <code>qBittorrent</code>"
-                msg += f"\n<b>Speed : </b>{get_readable_file_size(download.torrent_info().upspeed)}/s"
-                msg += f" | <b>Uploaded : </b>{get_readable_file_size(download.torrent_info().uploaded)}"
+                msg += f"\n<b>ᴇɴɢɪɴᴇ :</b> <code>qBittorrent</code>"
+                msg += f"\n<b>sᴘᴇᴇᴅ : </b>{get_readable_file_size(download.torrent_info().upspeed)}/s"
+                msg += f" | <b>ᴜᴘʟᴏᴀᴅᴇᴅ : </b>{get_readable_file_size(download.torrent_info().uploaded)}"
                 msg += f"\n<b>Ratio : </b>{round(download.torrent_info().ratio, 3)}"
                 msg += f" | <b>Time : </b>{get_readable_time(download.torrent_info().seeding_time)}"
                 msg += f"\n<code>/{BotCommands.CancelMirror} {download.gid()}</code>"
@@ -354,53 +354,3 @@ def get_content_type(link: str) -> str:
         except:
             content_type = None
     return content_type
-
-
-ONE, TWO, THREE = range(3)
-
-def pop_up_stats(update, context):
-    query = update.callback_query
-    stats = bot_sys_stats()
-    query.answer(text=stats, show_alert=True)
-
-def bot_sys_stats():
-    currentTime = get_readable_time(time.time() - botStartTime)
-    cpu = psutil.cpu_percent()
-    mem = psutil.virtual_memory().percent
-    disk = psutil.disk_usage(DOWNLOAD_DIR).percent
-    total, used, free = shutil.disk_usage(DOWNLOAD_DIR)
-    total = get_readable_file_size(total)
-    used = get_readable_file_size(used)
-    free = get_readable_file_size(free)
-    recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
-    sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
-    num_active = 0
-    num_upload = 0
-    num_split = 0
-    num_extract = 0
-    num_archi = 0
-    tasks = len(download_dict)
-    for stats in list(download_dict.values()):
-       if stats.status() == MirrorStatus.STATUS_DOWNLOADING:
-                num_active += 1
-       if stats.status() == MirrorStatus.STATUS_UPLOADING:
-                num_upload += 1
-       if stats.status() == MirrorStatus.STATUS_ARCHIVING:
-                num_archi += 1
-       if stats.status() == MirrorStatus.STATUS_EXTRACTING:
-                num_extract += 1
-       if stats.status() == MirrorStatus.STATUS_SPLITTING:
-                num_split += 1
-    stats = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>"
-    stats += f"""
-ʙᴏᴛ ᴜᴘᴛɪᴍᴇ : {currentTime}
-ᴄᴘᴜ : {progress_bar(cpu)} {cpu}%
-ʀᴀᴍ : {progress_bar(mem)} {mem}%
-ᴅɪsᴋ : {progress_bar(disk)} {disk}%
-ᴛᴏᴛᴀʟ : {total}
-ᴜsᴇᴅ : {used} || ғʀᴇᴇ : {free}
-sᴇɴᴛ : {sent} || ʀᴇᴄᴠ : {recv}</b>
-"""
-    return stats
-
-dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
