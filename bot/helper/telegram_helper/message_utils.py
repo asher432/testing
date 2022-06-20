@@ -274,7 +274,7 @@ def update_all_messages():
                                 editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
                             except Exception as e:
                                 LOGGER.error(str(e))
-                            status_reply_dict[chat_id].text = msg
+                        status_reply_dict[chat_id].text = msg
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
