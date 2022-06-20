@@ -1,5 +1,6 @@
 from logging import getLogger, WARNING
 import time
+import threading
 from time import time
 from threading import RLock, Lock
 from pyrogram import Client, enums
@@ -15,10 +16,9 @@ global_lock = Lock()
 GLOBAL_GID = set()
 getLogger("pyrogram").setLevel(WARNING)
 
-
-class TelegramDownloadHelper:
-
+class TelegramDownloadHelper(DownloadHelper):
     def __init__(self, listener):
+        super().__init__()
         self.name = ""
         self.size = 0
         self.progress = 0
@@ -27,7 +27,7 @@ class TelegramDownloadHelper:
         self.__listener = listener
         self.__id = ""
         self.__is_cancelled = False
-        self.__resource_lock = RLock()
+        self.__resource_lock = threading.RLock()
 
     @property
     def download_speed(self):
