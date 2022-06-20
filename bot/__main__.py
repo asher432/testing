@@ -19,7 +19,7 @@ from .helper.telegram_helper.button_build import ButtonMaker
 
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, count, leech_settings, search, rss
 
-now =datetime.now(pytz.timezone('Asia/kolkata'))
+now = datetime.now(pytz.timezone('Asia/kolkata'))
 
 def stats(update, context):
     global main
@@ -62,7 +62,7 @@ def stats(update, context):
             f'<b><i>CPU</i></b>: {cpuUsage}%\n' \
             f'<b><i>RAM</i></b>: {memory}%\n' \
             f'<b><i>SWAP</i></b>: {swap_t} || <b><i>USED</i></b>: {swap_p}%\n'\
-    keyboard = [InlineKeyboardButton("CLOSE", callback_data="stats_close")]
+    keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
     main = sendMarkup(stats, context.bot, update, reply_markup=InlineKeyboardMarkup(keyboard))
 
 def call_back_data(update, context):
