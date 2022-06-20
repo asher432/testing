@@ -21,6 +21,7 @@ from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clon
 
 
 def stats(update, context):
+    global main
     if ospath.exists('.git'):
         last_commit = check_output(["git log -1 --date=short --pretty=format:'%cd <b>From</b> %cr'"], shell=True).decode()
     else:
@@ -63,7 +64,6 @@ def stats(update, context):
     main = sendMarkup(stats, context.bot, update.message, reply_markup=InlineKeyboardMarkup(keyboard))
 
 def call_back_data(update, context):
-    global main
     query = update.callback_query
     query.answer()
     main.delete()
