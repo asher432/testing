@@ -423,7 +423,5 @@ sᴇɴᴛ : {sent} || ʀᴇᴄᴠ : {recv}</b>
 """
     return stats
 dispatcher.add_handler(
-    CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$')
-    CallbackQueryHandler(close, pattern='^' + str(TWO) + '$')
-    CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$')
+    CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$")
 )
