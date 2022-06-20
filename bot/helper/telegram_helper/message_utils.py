@@ -122,7 +122,7 @@ def delete_all_messages():
 
 
 def update_all_messages():
-    currentTime = get_readable_time((time.time() - botStartTime))
+    currentTime = get_readable_time((time() - botStartTime))
     msg, buttons = get_readable_message()
     with status_reply_dict_lock:
         for chat_id in list(status_reply_dict.keys()):
