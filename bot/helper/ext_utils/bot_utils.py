@@ -19,7 +19,6 @@ from telegram.error import *
 from telegram.ext import *
 from telegram.message import *
 from telegram.update import *
-from bot import *
 
 MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
 
