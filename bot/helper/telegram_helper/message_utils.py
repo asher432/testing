@@ -242,7 +242,7 @@ def get_readable_message():
             keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
                         InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),
                         InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]
-                        editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
         except Exception as e:
             LOGGER.error(str(e))
         
