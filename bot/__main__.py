@@ -19,7 +19,6 @@ from .helper.telegram_helper.button_build import ButtonMaker
 
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, count, leech_settings, search, rss
 
-now = time.localtime([19800])
 
 def stats(update, context):
     global main
@@ -28,7 +27,7 @@ def stats(update, context):
     else:
         last_commit = 'No UPSTREAM_REPO'
     currentTime = get_readable_time(time.time() - botStartTime)
-    current = now.strftime('%m%d %I:%M:%S %p')
+#    current = now.strftime('%m%d %I:%M:%S %p')
     osUptime = get_readable_time(time() - boot_time())
     total, used, free, disk= disk_usage('/')
     total = get_readable_file_size(total)
@@ -50,7 +49,7 @@ def stats(update, context):
     stats = f"〣 Ark Mirror 〣\n\n" \
             f'<b>Commit Date:</b> {last_commit}\n'\
             f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n' \
-            f'Sᴛᴀʀᴛᴇᴅ Aᴛ : {current}\n\n' \
+#            f'Sᴛᴀʀᴛᴇᴅ Aᴛ : {current}\n\n' \
             f'<b>DISK INFO</b>\n' \
             f'<b><i>Total</i></b>: {total}\n' \
             f'<b><i>Used</i></b>: {used} ~ ' \
