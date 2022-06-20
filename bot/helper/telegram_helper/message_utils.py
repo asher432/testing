@@ -363,8 +363,6 @@ sᴇɴᴛ : {sent} || ʀᴇᴄᴠ : {recv}</b>
 """
     return stats
 
-dispatcher.add_handler(
-    CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$")
-    CallbackQueryHandler(refresh, pattern="^" + str(ONE) + "$")
-    CallbackQueryHandler(close, pattern="^" + str(TWO) + '$')
-)
+dispatcher.add_handler(CallbackQueryHandler(refresh, pattern="^" + str(ONE) + "$"))
+dispatcher.add_handler(CallbackQueryHandler(close, pattern="^" + str(TWO) + '$'))
+dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
