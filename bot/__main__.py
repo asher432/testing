@@ -64,6 +64,7 @@ def stats(update, context):
     main = sendMarkup(stats, context.bot, update.message, reply_markup=InlineKeyboardMarkup(keyboard))
 
 def call_back_data(update, context):
+    global main
     query = update.callback_query
     query.answer()
     main.delete()
