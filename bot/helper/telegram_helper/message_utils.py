@@ -172,7 +172,7 @@ ONE, TWO, THREE = range(3)
 
 def refresh(update, context):
     query = update.callback_query
-    query.edit_message_text(text="Refreshing Status...⏳")
+    query.edit_message_text(text="Refreshing Status...Please Wait!")
     time.sleep(2)
     update_all_messages()
     
