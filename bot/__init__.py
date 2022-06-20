@@ -21,7 +21,10 @@ faulthandler_enable()
 
 setdefaulttimeout(600)
 
-botStartTime = time()
+botStartTime = time.time()
+if os.path.exists('log.txt')
+  with open('log.txt', 'r+') as f:
+    f.truncate(0)
 
 basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     handlers=[FileHandler('log.txt'), StreamHandler()],
