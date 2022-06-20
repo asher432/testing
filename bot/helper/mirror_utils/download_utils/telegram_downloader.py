@@ -33,7 +33,7 @@ class TelegramDownloadHelper(DownloadHelper):
     @property
     def download_speed(self):
         with self.__resource_lock:
-            return self.downloaded_bytes / (time.time() - self.__start_time)
+            return self.downloaded_bytes / (time() - self.__start_time)
 
     def __onDownloadStart(self, name, size, file_id):
         with global_lock:
