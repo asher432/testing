@@ -150,7 +150,7 @@ def update_all_messages():
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
-        Interval.append(setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
+        Interval.append(__setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
     progress, buttons = get_readable_message()
     with status_reply_dict_lock:
         if msg.chat.id in list(status_reply_dict.keys()):
