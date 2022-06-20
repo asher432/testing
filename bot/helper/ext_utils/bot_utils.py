@@ -51,8 +51,8 @@ class setInterval:
         thread.start()
 
     def __setInterval(self):
-        nextTime = time() + self.interval
-        while not self.stopEvent.wait(nextTime - time()):
+        nextTime = time.time() + self.interval
+        while not self.stopEvent.wait(nextTime - time.time()):
             nextTime += self.interval
             self.action()
 
@@ -119,7 +119,7 @@ def get_progress_bar_string(status):
 
 def get_readable_message():
     with download_dict_lock:
-        msg = f"<b>Ark Mirror</b>\n"
+        msg = f"<b>〣 Ark Mirror 〣</b>\n"
         if STATUS_LIMIT is not None:
             tasks = len(download_dict)
             global pages
@@ -128,7 +128,7 @@ def get_readable_message():
                 globals()['COUNT'] -= STATUS_LIMIT
                 globals()['PAGE_NO'] -= 1
         for index, download in enumerate(list(download_dict.values())[COUNT:], start=1):
-            msg += f"<b>════════════════════════════════</b>\n\n"
+            msg += f"<b>════════════════════════════════</b>\n"
             msg += f"\n\n<b>Name:</b> <code>{escape(str(download.name()))}</code>"
             msg += f"\n\n<b>Status:</b> <i>{download.status()}</i>"
             if download.status() not in [
@@ -145,7 +145,7 @@ def get_readable_message():
                 else:
                     msg += f"\n\n<b>Downloaded:</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
                 msg += f"\n<b>Speed:</b> {download.speed()} | <b>ETA:</b> {download.eta()}"
-                msg += f"\n<b>Elapsed : </b>{get_readable_time(time() - download.message.date.timestamp())}"
+                msg += f"\n<b>Elapsed : </b>{get_readable_time(time.time() - download.message.date.timestamp())}"
                 msg += f'\n<b>Source :</b> <a href="https://t.me/c/{str(download.message.chat.id)[4:]}/{download.message.message_id}">{download.message.from_user.first_name}</a>'
                 try:
                     msg += f"\n<b>Seeders:</b> {download.aria_download().num_seeders}" \
@@ -180,7 +180,7 @@ def get_readable_message():
             if STATUS_LIMIT is not None and index == STATUS_LIMIT:
                 break
         bmsg = f"<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
-        bmsg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {get_readable_time(time() - botStartTime)}"
+        bmsg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {get_readable_time(time.time() - botStartTime)}"
         dlspeed_bytes = 0
         upspeed_bytes = 0
         for download in list(download_dict.values()):
@@ -330,7 +330,7 @@ def pop_up_stats(update, context):
     stats = bot_sys_stats()
     query.answer(text=stats, show_alert=True)
 def bot_sys_stats():
-    currentTime = get_readable_time(time() - botStartTime)
+    currentTime = get_readable_time(time.time() - botStartTime)
     cpu = psutil.cpu_percent()
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage(DOWNLOAD_DIR).percent
