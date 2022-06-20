@@ -27,7 +27,6 @@ def stats(update, context):
     else:
         last_commit = 'No UPSTREAM_REPO'
     currentTime = get_readable_time(time.time() - botStartTime)
-#    current = now.strftime('%m%d %I:%M:%S %p')
     osUptime = get_readable_time(time.time() - boot_time())
     total, used, free, disk= disk_usage('/')
     total = get_readable_file_size(total)
@@ -61,7 +60,7 @@ def stats(update, context):
             f'<b><i>RAM</i></b>: {memory}%\n' \
             f'<b><i>SWAP</i></b>: {swap_t} || <b><i>USED</i></b>: {swap_p}%\n'
     keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
-    main = sendMarkup(stats, context.bot, update, reply_markup=InlineKeyboardMarkup(keyboard))
+    main = sendMarkup(stats, context.bot, update.message, reply_markup=InlineKeyboardMarkup(keyboard))
 
 def call_back_data(update, context):
     global main
