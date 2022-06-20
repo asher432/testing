@@ -16,8 +16,7 @@ from psutil import *
 from shutil import *
 from bot import botStartTime,DOWNLOAD_STATUS_UPDATE_INTERVAL, dispatcher, OWNER_ID, AUTO_DELETE_MESSAGE_DURATION, LOGGER, bot, \
     status_reply_dict, status_reply_dict_lock, download_dict, download_dict_lock, Interval, STATUS_LIMIT, DOWNLOAD_DIR
-from bot.helper.ext_utils.bot_utils import get_readable_message, get_readable_file_size, get_readable_time, progress_bar,get_progress_bar_string, MirrorStatus, setInterval, \
-    refresh, close, pop_up_stats, bot_sys_stats
+from bot.helper.ext_utils.bot_utils import get_readable_message, get_readable_file_size, get_readable_time, MirrorStatus, setInterval, \
 from telegram.error import TimedOut, BadRequest, RetryAfter
 from pyrogram.errors import FloodWait
 
@@ -27,6 +26,46 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 COUNT = 0
 PAGE_NO = 1
 ONE, TWO, THREE = range(3)
+FINISHED_PROGRESS_STR = "▓"
+UNFINISHED_PROGRESS_STR = "░"
+PROGRESS_MAX_SIZE = 100 // 8
+
+def get_progress_bar_string(status):
+    completed = status.processed_bytes() / 8
+    total = status.size_raw() / 8
+    p = 0 if total == 0 else round(completed * 100 / total)
+    p = min(max(p, 0), 100)
+    cFull = p // 8
+    cPart = p % 8 - 1
+    p_str = FINISHED_PROGRESS_STR * cFull
+    if cPart >=0:
+      p_str += FINISHED_PROGRESS_STR
+    p_str += UNFINISHED_PROGRESS_STR * (PROGRESS_MAX_SIZE - cFull)
+    p_str = f"[{p_str}]"
+    return p_str
+
+def progress_bar(percentage):
+    """Returns a progress bar for download
+    """
+    #percentage is on the scale of 0-1
+    comp = FINISHED_PROGRESS_STR
+    ncomp = UNFINISHED_PROGRESS_STR
+    pr = ""
+
+    if isinstance(percentage, str):
+        return "NaN"
+
+    try:
+        percentage=int(percentage)
+    except:
+        percentage = 0
+
+    for i in range(1,11):
+        if i <= int(percentage/10):
+            pr += comp
+        else:
+            pr += ncomp
+    return pr
 
 def sendMessage(text: str, bot, message: Message):
     try:
@@ -254,7 +293,7 @@ def get_readable_message():
             buttons.sbutton("Next", "status nex")
             button = InlineKeyboardMarkup(buttons.build_menu(3))
             return msg + bmsg, button
-        return msg + bmsg, sbutton        
+        return msg + bmsg, buttons.sbutton        
 
 
 def update_all_messages():
