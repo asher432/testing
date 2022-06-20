@@ -300,8 +300,6 @@ def get_readable_message():
             buttons.sbutton("Statistics", callback_data=str(THREE))
             button = InlineKeyboardMarkup(buttons.build_menu(3))
             return button
-        return msg + bmsg, sbutton
-        
         elif STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"<b>Tasks :</b> {tasks}\n"
             buttons = ButtonMaker()
