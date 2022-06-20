@@ -19,6 +19,7 @@ from .helper.telegram_helper.button_build import ButtonMaker
 
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, count, leech_settings, search, rss
 
+now =datetime.now(pytz.timezone('Asia/kolkata'))
 
 def stats(update, context):
     if ospath.exists('.git'):
@@ -26,6 +27,7 @@ def stats(update, context):
     else:
         last_commit = 'No UPSTREAM_REPO'
     currentTime = get_readable_time(time() - botStartTime)
+    current = now.strftime('%m%d %I:%M:%S %p')
     osUptime = get_readable_time(time() - boot_time())
     total, used, free, disk= disk_usage('/')
     total = get_readable_file_size(total)
@@ -44,37 +46,45 @@ def stats(update, context):
     mem_t = get_readable_file_size(memory.total)
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
-    stats = f'<b>Commit Date:</b> {last_commit}\n\n'\
-            f'<b>Bot Uptime:</b> {currentTime}\n'\
-            f'<b>OS Uptime:</b> {osUptime}\n\n'\
-            f'<b>Total Disk Space:</b> {total}\n'\
-            f'<b>Used:</b> {used} | <b>Free:</b> {free}\n\n'\
-            f'<b>Upload:</b> {sent}\n'\
-            f'<b>Download:</b> {recv}\n\n'\
-            f'<b>CPU:</b> {cpuUsage}%\n'\
-            f'<b>RAM:</b> {mem_p}%\n'\
-            f'<b>DISK:</b> {disk}%\n\n'\
-            f'<b>Physical Cores:</b> {p_core}\n'\
-            f'<b>Total Cores:</b> {t_core}\n\n'\
-            f'<b>SWAP:</b> {swap_t} | <b>Used:</b> {swap_p}%\n'\
-            f'<b>Memory Total:</b> {mem_t}\n'\
-            f'<b>Memory Free:</b> {mem_a}\n'\
-            f'<b>Memory Used:</b> {mem_u}\n'
-    sendMessage(stats, context.bot, update.message)
+    stats = f"〣 Ark Mirror 〣\n\n" \
+            f'<b>Commit Date:</b> {last_commit}\n'\
+            f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n' \
+            f'Sᴛᴀʀᴛᴇᴅ Aᴛ : {current}\n\n' \
+            f'<b>DISK INFO</b>\n' \
+            f'<b><i>Total</i></b>: {total}\n' \
+            f'<b><i>Used</i></b>: {used} ~ ' \
+            f'<b><i>Free</i></b>: {free}\n\n' \
+            f'<b>DATA USAGE</b>\n' \
+            f'<b><i>UL</i></b>: {sent} ~ ' \
+            f'<b><i>DL</i></b>: {recv}\n\n' \
+            f'<b>SERVER STATS</b>\n' \
+            f'<b><i>CPU</i></b>: {cpuUsage}%\n' \
+            f'<b><i>RAM</i></b>: {memory}%\n' \
+            f'<b><i>SWAP</i></b>: {swap_t} || <b><i>USED</i></b>: {swap_p}%\n'\
+    keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
+    main = sendMarkup(stats, context.bot, update, reply_markup=InlineKeyboardMarkup(keyboard))
+
+def call_back_data(update, context):
+    global main
+    query = update.callback_query
+    query.answer()
+    main.delete()
+    main = None   
     
 def start(update, context):
     buttons = ButtonMaker()
     buttons.buildbutton("Repo", "https://github.com/arkonn/Ark-Mirror")
     buttons.buildbutton("Join Group", "https://t.me/arkmirror")
+    buttons.buildbutton("O W N E R", "https://t.me/include_i0stream")
     reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
     if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
         start_string = f'''
-This bot can mirror all your links to Google Drive!
+Ark Mirror Bot is ready!
 Type /{BotCommands.HelpCommand} to get a list of available commands
 '''
         sendMarkup(start_string, context.bot, update.message, reply_markup)
     else:
-        sendMarkup('Nikal, Bsdk', context.bot, update.message, reply_markup)
+        sendMarkup('Ark Mirror bot is authorised to work in the mentioned group only', context.bot, update.message, reply_markup)
 
 def restart(update, context):
     restart_message = sendMessage("Restarting...", context.bot, update.message)
@@ -218,8 +228,17 @@ def main():
                              if 'Restarted successfully!' in msg and cid == chat_id:
                                  bot.editMessageText(msg, chat_id, msg_id, parse_mode='HTMl', disable_web_page_preview=True)
                                  osremove(".restartmsg")
-                             else:
-                                 bot.sendMessage(cid, msg, 'HTML')
+                             elif OWNER_ID:
+                                try:
+                                    text = "<b>Bot Restarted!</b>"
+                                    message = bot.sendMessage(chat_id=OWNER_ID, text=text, parse_mode=ParseMode.HTML)
+                                    if AUTHORIZED_CHATS:
+                                        for i in AUTHORIZED_CHATS:
+                                            bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
+                                 except Exception as e:
+                                     LOGGER.error(e)
+                             msg = ''
+                             bot.sendMessage(cid, msg, 'HTML')
                              msg = ''
                 if 'Restarted successfully!' in msg and cid == chat_id:
                      bot.editMessageText(msg, chat_id, msg_id, parse_mode='HTMl', disable_web_page_preview=True)
@@ -252,8 +271,8 @@ def main():
     updater.start_polling(drop_pending_updates=IGNORE_PENDING_REQUESTS)
     LOGGER.info("Bot Started!")
     signal(SIGINT, exit_clean_up)
-
-main()
+    
 app.start()
+main()
 
 main_loop.run_forever()
