@@ -30,43 +30,6 @@ FINISHED_PROGRESS_STR = "▓"
 UNFINISHED_PROGRESS_STR = "░"
 PROGRESS_MAX_SIZE = 100 // 8
 
-def get_progress_bar_string(status):
-    completed = status.processed_bytes() / 8
-    total = status.size_raw() / 8
-    p = 0 if total == 0 else round(completed * 100 / total)
-    p = min(max(p, 0), 100)
-    cFull = p // 8
-    cPart = p % 8 - 1
-    p_str = FINISHED_PROGRESS_STR * cFull
-    if cPart >=0:
-      p_str += FINISHED_PROGRESS_STR
-    p_str += UNFINISHED_PROGRESS_STR * (PROGRESS_MAX_SIZE - cFull)
-    p_str = f"[{p_str}]"
-    return p_str
-
-def progress_bar(percentage):
-    """Returns a progress bar for download
-    """
-    #percentage is on the scale of 0-1
-    comp = FINISHED_PROGRESS_STR
-    ncomp = UNFINISHED_PROGRESS_STR
-    pr = ""
-
-    if isinstance(percentage, str):
-        return "NaN"
-
-    try:
-        percentage=int(percentage)
-    except:
-        percentage = 0
-
-    for i in range(1,11):
-        if i <= int(percentage/10):
-            pr += comp
-        else:
-            pr += ncomp
-    return pr
-
 def sendMessage(text: str, bot, message: Message):
     try:
         return bot.sendMessage(message.chat_id,
@@ -282,15 +245,6 @@ def get_readable_message():
         buttons.sbutton("Close", str(TWO))
         buttons.sbutton("Statistics", str(THREE))
         sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
-        
-        if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-            msg += f"<b>Tasks:</b> {tasks}\n"
-            buttons = ButtonMaker()
-            buttons.sbutton("Prev", "status pre")
-            buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
-            buttons.sbutton("Next", "status nex")
-            button = InlineKeyboardMarkup(buttons.build_menu(3))
-            return msg + bmsg, button
         return msg + bmsg, sbutton        
 
 
@@ -303,23 +257,22 @@ def update_all_messages():
                 if len(msg) == 0:
                     msg = "Starting DL"
                     if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-                        msg += f"<b>Page:</b> {PAGE_NO}/{pages} | <b>Tasks:</b> {tasks}\n"
+                        msg += f"<b>Tasks:</b> {tasks}\n"
                         buttons = ButtonMaker()
                         buttons.sbutton("Prev", "status pre")
                         buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
                         buttons.sbutton("Next", "status nex")
                         button = InlineKeyboardMarkup(buttons.build_menu(3))
-                        return msg + bmsg, button
-                    return msg + bmsg, ""
-                    try:
-                        keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                                     InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
-                                    [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
-                        editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-                    except Exception as e:
-                        LOGGER.error(str(e))
-                    status_reply_dict[chat_id].text = msg
-
+                        return msg, button
+                    else:
+                        try:
+                            keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                                        InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),
+                                        InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
+                            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+                        except Exception as e:
+                            LOGGER.error(str(e))
+                        status_reply_dict[chat_id].text = msg
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
