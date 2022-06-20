@@ -236,9 +236,9 @@ def main():
                                     if AUTHORIZED_CHATS:
                                         for i in AUTHORIZED_CHATS:
                                             bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
-                                 except Exception as e:
+                                except Exception as e:
                                     LOGGER.error(e)
-                             msg = ''
+                                    msg = ''
                              bot.sendMessage(cid, msg, 'HTML')
                              msg = ''
                 if 'Restarted successfully!' in msg and cid == chat_id:
