@@ -19,11 +19,7 @@ from .helper.telegram_helper.button_build import ButtonMaker
 
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, count, leech_settings, search, rss
 
-def now(update, context):
-    seconds= time.time()
-    bot_time = time.ctime(seconds + 19800)
-    strftime = time.strftime('%m%d %I:%M:%S %p', bot_time)
-    return bot_time
+now = time.time.([19800])
 
 def stats(update, context):
     global main
