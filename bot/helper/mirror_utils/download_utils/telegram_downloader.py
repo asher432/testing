@@ -1,6 +1,6 @@
 from logging import *
-import time import *
-import threading import *
+from time import *
+from threading import *
 from threading import RLock, Lock
 from pyrogram import *
 from bot import LOGGER, download_dict, download_dict_lock, STOP_DUPLICATE, STORAGE_THRESHOLD, app
