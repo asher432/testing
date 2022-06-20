@@ -25,7 +25,7 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 
 COUNT = 0
 PAGE_NO = 1
-ONE, TWO, THREE = range(3)
+
 FINISHED_PROGRESS_STR = "▓"
 UNFINISHED_PROGRESS_STR = "░"
 PROGRESS_MAX_SIZE = 100 // 8
@@ -216,6 +216,8 @@ def sendStatusMessage(msg, bot):
         else:
             message = sendMarkup(progress, bot, msg, buttons)
         status_reply_dict[msg.chat.id] = message
+
+ONE, TWO, THREE = range(3)
 
 def refresh(update, context):
     query = update.callback_query
