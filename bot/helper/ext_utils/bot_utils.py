@@ -6,7 +6,7 @@ from html import escape
 from psutil import virtual_memory, cpu_percent, disk_usage
 from requests import head as rhead
 from urllib.request import urlopen
-from telegram import InlineKeyboardMarkup
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot import download_dict, download_dict_lock, STATUS_LIMIT, botStartTime, DOWNLOAD_DIR
@@ -15,8 +15,9 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 import shutil
 import psutil
 import logging
-from telegram.error import RetryAfter
-from telegram.ext import CallbackQueryHandler
+from telegram.error import TimedOut, BadRequest,RetryAfter
+from pyrogram.errors import FloodWait
+from telegram.ext import CallbackQueryHandler, CallbackContext
 from telegram.message import Message
 from telegram.update import Update
 from bot import *
@@ -28,17 +29,16 @@ URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 COUNT = 0
 PAGE_NO = 1
 
-
 class MirrorStatus:
     STATUS_UPLOADING = "Uploading..."
     STATUS_DOWNLOADING = "Downloading..."
-    STATUS_CLONING = "Cloning...♻"
+    STATUS_CLONING = "Cloning..."
     STATUS_WAITING = "Queued...💤"
     STATUS_FAILED = "Failed . Cleaning Download..."
     STATUS_PAUSE = "Paused..."
     STATUS_ARCHIVING = "Archiving..."
     STATUS_EXTRACTING = "Extracting..."
-    STATUS_SPLITTING = "Splitting...✂"
+    STATUS_SPLITTING = "Splitting..."
     STATUS_CHECKING = "CheckingUp..."
     STATUS_SEEDING = "Seeding..."
 
@@ -230,10 +230,8 @@ def get_readable_message():
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
         
         buttons = ButtonMaker()
-        buttons.sbutton("Refresh", str(ONE))
-        buttons.sbutton("Close", str(TWO))
         buttons.sbutton("Statistics", str(THREE))
-        sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
+        sbutton = InlineKeyboardMarkup(buttons.build_menu(1))
         
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"<b>Tasks:</b> {tasks}\n"
