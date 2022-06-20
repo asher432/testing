@@ -256,6 +256,7 @@ def update_all_messages():
             if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
                 if len(msg) == 0:
                     msg = "Starting DL"
+                    
                     if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
                         msg += f"<b>Tasks:</b> {tasks}\n"
                         buttons = ButtonMaker()
@@ -264,6 +265,7 @@ def update_all_messages():
                         buttons.sbutton("Next", "status nex")
                         button = InlineKeyboardMarkup(buttons.build_menu(3))
                         return msg, button
+                    editMessage(msg, status_reply_dict[chat_id])
                     else:
                         try:
                             keyboard = [InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
