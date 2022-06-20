@@ -239,9 +239,9 @@ def get_readable_message():
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
         
         buttons = ButtonMaker()
-        buttons.sbutton("Refresh", str(ONE))
-        buttons.sbutton("Close", str(TWO))
-        buttons.sbutton("Statistics", str(THREE))
+        buttons.sbutton("Refresh", callback_data=str(ONE))
+        buttons.sbutton("Close", callback_data=str(TWO))
+        buttons.sbutton("Statistics", callback_data=str(THREE))
         sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
         
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
