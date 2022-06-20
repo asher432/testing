@@ -149,7 +149,7 @@ def progress_bar(percentage):
 
 def get_readable_message():
     with download_dict_lock:
-        msg = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>\n"
+        msg = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>\n\n"
         if STATUS_LIMIT is not None:
             tasks = len(download_dict)
             global pages
