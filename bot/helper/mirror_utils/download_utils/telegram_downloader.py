@@ -11,25 +11,21 @@ from bot.helper.telegram_helper.message_utils import sendMarkup, sendMessage, se
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.ext_utils.fs_utils import check_storage_threshold
 
-global_lock = threading.Lock()
+global_lock = Lock()
 GLOBAL_GID = set()
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
+getLogger("pyrogram").setLevel(WARNING)
 
 class TelegramDownloadHelper(DownloadHelper):
     def __init__(self, listener):
-        super().__init__()
-        self.__listener = listener
-        self.__resource_lock = threading.RLock()
         self.name = ""
+        self.size = 0
+        self.progress = 0
+        self.downloaded_bytes = 0
         self.__start_time = time()
+        self.__listener = listener
         self.__id = ""
-        self.__bot = app
         self.__is_cancelled = False
-        
-    @property
-    def id(self):
-        with self.__resource_lock:
-            return self.__gid
+        self.__resource_lock = RLock()
         
     @property
     def download_speed(self):
