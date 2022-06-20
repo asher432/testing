@@ -49,7 +49,6 @@ def stats(update, context):
     stats = f"〣 Ark Mirror 〣\n\n" \
             f'<b>Commit Date:</b> {last_commit}\n'\
             f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n' \
-#            f'Sᴛᴀʀᴛᴇᴅ Aᴛ : {current}\n\n' \
             f'<b>DISK INFO</b>\n' \
             f'<b><i>Total</i></b>: {total}\n' \
             f'<b><i>Used</i></b>: {used} ~ ' \
