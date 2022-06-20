@@ -300,4 +300,7 @@ def sendStatusMessage(msg, bot):
         else:
             message = sendMarkup(progress, bot, msg, buttons)
         status_reply_dict[msg.chat.id] = message
-        
+
+dispatcher.add_handler(
+    CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$")
+)
