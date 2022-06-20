@@ -232,16 +232,6 @@ def main():
                              if 'Restarted successfully!' in msg and cid == chat_id:
                                  bot.editMessageText(msg, chat_id, msg_id, parse_mode='HTMl', disable_web_page_preview=True)
                                  osremove(".restartmsg")
-                             elif OWNER_ID:
-                                try:
-                                    text = "<b>Bot Restarted!</b>"
-                                    message = bot.sendMessage(chat_id=OWNER_ID, text=text, parse_mode=ParseMode.HTML)
-                                    if AUTHORIZED_CHATS:
-                                        for i in AUTHORIZED_CHATS:
-                                            bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
-                                except Exception as e:
-                                    LOGGER.error(e)
-                                    msg = ''
                              bot.sendMessage(cid, msg, 'HTML')
                              msg = ''
                 if 'Restarted successfully!' in msg and cid == chat_id:
