@@ -282,13 +282,14 @@ def get_readable_message():
         
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"<b>Page:</b> {PAGE_NO}/{pages} | <b>Tasks:</b> {tasks}\n"
-            buttons = ButtonMaker()
-            buttons.sbutton("Refresh", str(ONE))
-            buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
-            buttons.sbutton("Stats", str(THREE))
-            button = InlineKeyboardMarkup(buttons.build_menu(3))
-            return msg + bmsg, button
-        return msg + bmsg, ""
+        try: 
+            keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                         InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
+                        [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
+            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+        except Exception as e:
+            LOGGER.error(str(e))
+        status_reply_dict[chat_id].text = msg
 
 def turn(data):
     try:
