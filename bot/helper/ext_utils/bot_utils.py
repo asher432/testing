@@ -172,6 +172,23 @@ def bot_sys_stats():
     free = get_readable_file_size(free)
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
+    num_active = 0
+    num_upload = 0
+    num_split = 0
+    num_extract = 0
+    num_archi = 0
+    tasks = len(download_dict)
+    for stats in list(download_dict.values()):
+       if stats.status() == MirrorStatus.STATUS_DOWNLOADING:
+                num_active += 1
+       if stats.status() == MirrorStatus.STATUS_UPLOADING:
+                num_upload += 1
+       if stats.status() == MirrorStatus.STATUS_ARCHIVING:
+                num_archi += 1
+       if stats.status() == MirrorStatus.STATUS_EXTRACTING:
+                num_extract += 1
+       if stats.status() == MirrorStatus.STATUS_SPLITTING:
+                num_split += 1
     stats = f"""<b>
 ═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════
 
@@ -276,20 +293,24 @@ def get_readable_message():
                     upspeed_bytes += float(spd.split('M')[0]) * 1048576
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
         
-        buttons = ButtonMaker()
-        buttons.sbutton("Statistics", str(THREE))
-        sbutton = InlineKeyboardMarkup(buttons.build_menu(1))
+        if tasks is not None and tasks < STATUS_LIMIT:
+            buttons = ButtonMaker()
+            buttons.sbutton("Refresh", callback_data=str(ONE))
+            buttond.sbutton("Close", callback_data=str(TWO))
+            buttons.sbutton("Statistics", callback_data=str(THREE))
+            button = InlineKeyboardMarkup(buttons.build_menu(3))
+            return button
+        return msg + bmsg, sbutton
         
-        if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-            msg += f"<b>Page:</b> {PAGE_NO}/{pages} | <b>Tasks:</b> {tasks}\n"
-        try: 
-            keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                         InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
-                        [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
-            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-        except Exception as e:
-            LOGGER.error(str(e))
-        status_reply_dict[chat_id].text = msg
+        elif STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
+            msg += f"<b>Tasks :</b> {tasks}\n"
+            buttons = ButtonMaker()
+            buttons.sbutton("Prev", "status pre")
+            buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
+            buttons.sbutton("Next", "status nex")
+            button = InlineKeyboardMarkup(buttons.build_menu(3))
+            return msg + bmsg, button
+        return msg + bmsg, sbutton        
 
 def turn(data):
     try:
