@@ -1,30 +1,13 @@
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import CallbackContext, CallbackQueryHandler
-from telegram.message import Message
-from re import match as re_match, findall as re_findall
-from threading import Thread, Event
-from requests import head as rhead
-from telegram.update import Update
-from math import ceil
-from html import escape
-from urllib.request import urlopen
-import time
 from time import sleep
-from bot import botStartTime,DOWNLOAD_STATUS_UPDATE_INTERVAL, dispatcher, OWNER_ID, AUTO_DELETE_MESSAGE_DURATION, LOGGER, bot, \
-    status_reply_dict, status_reply_dict_lock, download_dict, download_dict_lock, Interval, STATUS_LIMIT, DOWNLOAD_DIR
-from bot.helper.ext_utils.bot_utils import get_readable_message, get_readable_file_size, get_readable_time, MirrorStatus, setInterval
-from telegram.error import TimedOut, BadRequest, RetryAfter
+from telegram import InlineKeyboardMarkup
+from telegram.message import Message
+from telegram.error import RetryAfter
 from pyrogram.errors import FloodWait
 
-from bot.helper.telegram_helper.button_build import ButtonMaker
-from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot import AUTO_DELETE_MESSAGE_DURATION, LOGGER, status_reply_dict, status_reply_dict_lock, \
+                Interval, DOWNLOAD_STATUS_UPDATE_INTERVAL, RSS_CHAT_ID, bot, rss_session
+from bot.helper.ext_utils.bot_utils import get_readable_message, setInterval
 
-COUNT = 0
-PAGE_NO = 1
-
-FINISHED_PROGRESS_STR = "▓"
-UNFINISHED_PROGRESS_STR = "░"
-PROGRESS_MAX_SIZE = 100 // 8
 
 def sendMessage(text: str, bot, message: Message):
     try:
@@ -136,49 +119,15 @@ def delete_all_messages():
                 LOGGER.error(str(e))
 
 def update_all_messages():
-    currentTime = get_readable_time((time.time() - botStartTime))
-    msg = get_readable_message()
-    with download_dict_lock:
-        dlspeed_bytes = 0
-        uldl_bytes = 0
-        for download in list(download_dict.values()):
-            speedy = download.speed()
-            if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                if 'K' in speedy:
-                    dlspeed_bytes += float(speedy.split('K')[0]) * 1024
-                elif 'M' in speedy:
-                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
-            if download.status() == MirrorStatus.STATUS_UPLOADING:
-                if 'K' in speedy:
-            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
-                elif 'M' in speedy:
-                    uldl_bytes += float(speedy.split('M')[0]) * 1048576
-        dlspeed = get_readable_file_size(dlspeed_bytes)
-        ulspeed = get_readable_file_size(uldl_bytes)
-        msg += f"<b>DL :</b> <b>{dlspeed}ps</b> || <b>UL :</b> <b>{ulspeed}ps</b>\n"
+    msg, buttons = get_readable_message()
     with status_reply_dict_lock:
         for chat_id in list(status_reply_dict.keys()):
             if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
-                if len(msg) == 0:
-                    msg = "Starting DL"
-                    if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
-                        msg += f"<b>Tasks:</b> {tasks}\n"
-                        buttons = ButtonMaker()
-                        buttons.sbutton("Prev", "status pre")
-                        buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
-                        buttons.sbutton("Next", "status nex")
-                        button = InlineKeyboardMarkup(buttons.build_menu(3))
-                        return msg + bmsg, button
-                    return msg + bmsg, sbutton
-                    else:
-                        try:
-                            keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                                         InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
-                                        [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
-                            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-                        except Exception as e:
-                            LOGGER.error(str(e))
-                        status_reply_dict[chat_id].text = msg
+                if buttons == "":
+                    editMessage(msg, status_reply_dict[chat_id])
+                else:
+                    editMessage(msg, status_reply_dict[chat_id], buttons)
+                status_reply_dict[chat_id].text = msg
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
