@@ -29,8 +29,8 @@ URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 COUNT = 0
 PAGE_NO = 1
 
-FINISHED_PROGRESS_STR = "▓"
-UNFINISHED_PROGRESS_STR = "░"
+FINISHED_PROGRESS_STR = "▰"
+UNFINISHED_PROGRESS_STR = "▱"
 PROGRESS_MAX_SIZE = 100 // 8
 
 class MirrorStatus:
