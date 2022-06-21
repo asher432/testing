@@ -229,7 +229,7 @@ class MirrorListener:
                                 )["path"]
                                 buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
                             else:
-                                buttons.buildbutton(f"🔗 Source Link", source_link)
+                                buttons.buildbutton(f"🔗 Source Link", "source_link")
                     except Exception as e:
                         LOGGER.warning(e)
                         pass
