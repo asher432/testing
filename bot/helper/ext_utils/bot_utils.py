@@ -350,8 +350,15 @@ def get_readable_message():
             buttons.sbutton("Next", "status nex")
             button = InlineKeyboardMarkup(buttons.build_menu(3))
             return msg + bmsg, button
-        return msg + bmsg, sbutton        
-
+        return msg + bmsg, sbutton  
+    
+def deleteMessage(bot, message: Message):
+    try:
+        bot.delete_message(chat_id=message.chat.id,
+                           message_id=message.message_id)
+    except Exception as e:
+        LOGGER.error(str(e))
+        
 def delete_all_messages():
     with status_reply_dict_lock:
         for message in list(status_reply_dict.values()):
@@ -442,17 +449,18 @@ def bot_sys_stats():
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
     stats = f"""
-BOT UPTIME : {currentTime}
-CPU : {progress_bar(cpu)} {cpu}%
-RAM : {progress_bar(mem)} {mem}%
-DISK : {progress_bar(disk)} {disk}%
+<b>BOT UPTIME :</b> {currentTime}
 
-TOTAL : {total}
-USED : {used} || FREE : {free}
+<b>CPU :</b> {progress_bar(cpu)} {cpu}%
+<b>RAM :</b> {progress_bar(mem)} {mem}%
+<b>DISK :</b> {progress_bar(disk)} {disk}%
 
-SENT : {sent} || RECV : {recv}
+<b>TOTAL :</b> {total}
+<b>USED :</b> {used} || <b>FREE :</b> {free}
 
-Team Ark Mirror ;)
+<b>SENT :</b> {sent} || <b>RECV :</b> {recv}
+
+<b>Team Ark Mirror ;)</b>
 """
     return stats
 
