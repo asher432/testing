@@ -316,7 +316,7 @@ def get_readable_message():
                 msg += f"\n<code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             else:
                 msg += f"\n<b>Size : </b>{download.size()}"
-            msg += "\n"
+            msg += "\n<b>--------------------------------------------</b>"
             if STATUS_LIMIT is not None and index == STATUS_LIMIT:
                 break
         bmsg = f"\n<b>--------------------------------------------</b>\n"
@@ -339,7 +339,6 @@ def get_readable_message():
         buttons = ButtonMaker()
         buttons.sbutton("Refresh", str(ONE))
         buttons.sbutton("Stats", str(THREE))
-        buttons.sbutton("Close", str(TWO))
         sbutton = InlineKeyboardMarkup(buttons.build_menu(2))
 
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
