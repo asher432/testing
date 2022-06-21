@@ -440,23 +440,6 @@ def bot_sys_stats():
     free = get_readable_file_size(free)
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
-    num_active = 0
-    num_upload = 0
-    num_split = 0
-    num_extract = 0
-    num_archi = 0
-    tasks = len(download_dict)
-    for stats in list(download_dict.values()):
-       if stats.status() == MirrorStatus.STATUS_DOWNLOADING:
-                num_active += 1
-       if stats.status() == MirrorStatus.STATUS_UPLOADING:
-                num_upload += 1
-       if stats.status() == MirrorStatus.STATUS_ARCHIVING:
-                num_archi += 1
-       if stats.status() == MirrorStatus.STATUS_EXTRACTING:
-                num_extract += 1
-       if stats.status() == MirrorStatus.STATUS_SPLITTING:
-                num_split += 1
     stats = f"""
 ══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════
 BOT UPTIME 🕐 : {currentTime}
@@ -471,6 +454,5 @@ SENT : {sent} || RECV : {recv}
 
 dispatcher.add_handler(CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$'))
 dispatcher.add_handler(CallbackQueryHandler(close, pattern='^' + str(TWO) + '$'))
-dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
-dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
+dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$'))
                        
