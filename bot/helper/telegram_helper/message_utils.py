@@ -164,7 +164,6 @@ def delete_all_messages():
 def update_all_messages():
     currentTime = get_readable_time((time.time() - botStartTime))
     msg = get_readable_message()
-    msg += f'<b>BOT UPTIME :</b> <b>{currentTime}</b>\n\n'
     with download_dict_lock:
         dlspeed_bytes = 0
         uldl_bytes = 0
