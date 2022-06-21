@@ -327,8 +327,10 @@ def get_readable_message():
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
 
         buttons = ButtonMaker()
+        buttons.sbutton("Refresh", str(ONE))
         buttons.sbutton("Statistics", str(THREE))
-        sbutton = InlineKeyboardMarkup(buttons.build_menu(1))
+        buttons.sbutton("Clear", str(TWO))
+        sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
 
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"<b>Tasks:</b> {tasks}\n"
@@ -414,7 +416,7 @@ def bot_sys_stats():
                 num_extract += 1
        if stats.status() == MirrorStatus.STATUS_SPLITTING:
                 num_split += 1
-    stats = f"═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════"
+    stats = f"══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════"
     stats += f"""
 Bot Uptime: {currentTime}
 DOWN: {recv} | UP: {sent}
