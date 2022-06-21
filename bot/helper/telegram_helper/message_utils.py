@@ -126,7 +126,6 @@ def update_all_messages():
                 if buttons == "":
                     editMessage(msg, status_reply_dict[chat_id])
                 else:
-                    msg += f"\n\n<b>▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</b>\n\n"
                     editMessage(msg, status_reply_dict[chat_id], buttons)
                 status_reply_dict[chat_id].text = msg
 
