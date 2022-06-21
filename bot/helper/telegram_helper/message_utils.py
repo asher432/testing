@@ -10,10 +10,6 @@ from html import escape
 from urllib.request import urlopen
 import time
 from time import sleep
-import psutil
-import shutil
-from psutil import *
-from shutil import *
 from bot import botStartTime,DOWNLOAD_STATUS_UPDATE_INTERVAL, dispatcher, OWNER_ID, AUTO_DELETE_MESSAGE_DURATION, LOGGER, bot, \
     status_reply_dict, status_reply_dict_lock, download_dict, download_dict_lock, Interval, STATUS_LIMIT, DOWNLOAD_DIR
 from bot.helper.ext_utils.bot_utils import get_readable_message, get_readable_file_size, get_readable_time, MirrorStatus, setInterval
@@ -165,14 +161,24 @@ def update_all_messages():
             if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
                 if len(msg) == 0:
                     msg = "Starting DL"
-                try:
-                    keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                                 InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
-                                [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
-                    editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-                except Exception as e:
-                    LOGGER.error(str(e))
-                status_reply_dict[chat_id].text = msg
+                    if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
+                        msg += f"<b>Tasks:</b> {tasks}\n"
+                        buttons = ButtonMaker()
+                        buttons.sbutton("Prev", "status pre")
+                        buttons.sbutton(f"{PAGE_NO}/{pages}", str(THREE))
+                        buttons.sbutton("Next", "status nex")
+                        button = InlineKeyboardMarkup(buttons.build_menu(3))
+                        return msg + bmsg, button
+                    return msg + bmsg, sbutton
+                    else:
+                        try:
+                            keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                                         InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
+                                        [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
+                            editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+                        except Exception as e:
+                            LOGGER.error(str(e))
+                        status_reply_dict[chat_id].text = msg
 
 def sendStatusMessage(msg, bot):
     if len(Interval) == 0:
@@ -192,24 +198,3 @@ def sendStatusMessage(msg, bot):
         else:
             message = sendMarkup(progress, bot, msg, buttons)
         status_reply_dict[msg.chat.id] = message
-
-ONE,TWO,THREE = range(3)
-def refresh(update, context):
-    query = update.callback_query
-    query.edit_message_text(text="Refreshing Status...Please Wait!!")
-    time.sleep(2)
-    update_all_messages()
-    
-def close(update, context):
-    chat_id  = update.effective_chat.id
-    user_id = update.callback_query.from_user.id
-    bot = context.bot
-    query = update.callback_query
-    admins = bot.get_chat_member(chat_id, user_id).status in ['creator', 'administrator'] or user_id in [OWNER_ID]
-    if admins:
-        delete_all_messages()
-    else:
-        query.answer(text="Why are you Gay!", show_alert=True)
-
-dispatcher.add_handler(CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$'))
-dispatcher.add_handler(CallbackQueryHandler(close, pattern='^' + str(TWO) + '$'))
