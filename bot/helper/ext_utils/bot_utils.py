@@ -446,12 +446,10 @@ def bot_sys_stats():
                 num_split += 1
     stats = f"""
 ══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════
-
 BOT UPTIME 🕐 : {currentTime}
 CPU : {progress_bar(cpu)} {cpu}%
 RAM : {progress_bar(mem)} {mem}%
 DISK : {progress_bar(disk)} {disk}%
-
 TOTAL : {total}
 USED : {used} || FREE : {free}
 SENT : {sent} || RECV : {recv}
