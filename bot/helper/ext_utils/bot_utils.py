@@ -307,6 +307,7 @@ def get_readable_message():
             msg += "\n\n"
             if STATUS_LIMIT is not None and index == STATUS_LIMIT:
                 break
+        bmsg = f"\n<b>--------------------------------------------</b>"
         bmsg = f"<b>CPU :</b> {cpu_percent()}% | <b>FREE :</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
         bmsg += f"\n<b>RAM :</b> {virtual_memory().percent}% | <b>UPTIME :</b> {get_readable_time(time.time() - botStartTime)}"
         dlspeed_bytes = 0
@@ -326,10 +327,8 @@ def get_readable_message():
         bmsg += f"\n<b>DL:</b> {get_readable_file_size(dlspeed_bytes)}/s | <b>UL:</b> {get_readable_file_size(upspeed_bytes)}/s"
 
         buttons = ButtonMaker()
-        buttons.sbutton("Refresh", str(ONE))
-        buttons.sbutton("Clear", str(TWO))
         buttons.sbutton("Statistics", str(THREE))
-        sbutton = InlineKeyboardMarkup(buttons.build_menu(3))
+        sbutton = InlineKeyboardMarkup(buttons.build_menu(1))
 
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
             msg += f"<b>Tasks:</b> {tasks}\n"
@@ -362,50 +361,6 @@ def turn(data):
         return True
     except:
         return False
-    
-def update_all_messages():
-    currentTime = get_readable_time((time.time() - botStartTime))
-    msg = get_readable_message()
-    with download_dict_lock:
-        dlspeed_bytes = 0
-        uldl_bytes = 0
-        for download in list(download_dict.values()):
-            speedy = download.speed()
-            if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                if 'K' in speedy:
-                    dlspeed_bytes += float(speedy.split('K')[0]) * 1024
-                elif 'M' in speedy:
-                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
-            if download.status() == MirrorStatus.STATUS_UPLOADING:
-                if 'K' in speedy:
-            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
-                elif 'M' in speedy:
-                    uldl_bytes += float(speedy.split('M')[0]) * 1048576
-        dlspeed = get_readable_file_size(dlspeed_bytes)
-        ulspeed = get_readable_file_size(uldl_bytes)
-        msg += f"<b>DL :</b> <b>{dlspeed}ps</b> || <b>UL :</b> <b>{ulspeed}ps</b>\n"
-    with status_reply_dict_lock:
-        for chat_id in list(status_reply_dict.keys()):
-            if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
-                if len(msg) == 0:
-                    msg = "Starting DL"
-                try:
-                    keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
-                                 InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
-                                [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
-                    editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
-                except Exception as e:
-                    LOGGER.error(str(e))
-                status_reply_dict[chat_id].text = msg
- 
-def delete_all_messages():
-    with status_reply_dict_lock:
-        for message in list(status_reply_dict.values()):
-            try:
-                deleteMessage(bot, message)
-                del status_reply_dict[message.chat.id]
-            except Exception as e:
-                LOGGER.error(str(e))
                 
 ONE, TWO, THREE = range(3)
         
@@ -459,7 +414,7 @@ def bot_sys_stats():
                 num_extract += 1
        if stats.status() == MirrorStatus.STATUS_SPLITTING:
                 num_split += 1
-    stats = f"Bot Statistics"
+    stats = f"═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════"
     stats += f"""
 Bot Uptime: {currentTime}
 DOWN: {recv} | UP: {sent}
