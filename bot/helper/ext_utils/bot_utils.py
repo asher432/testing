@@ -441,14 +441,17 @@ def bot_sys_stats():
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
     stats = f"""
-══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════
-BOT UPTIME 🕐 : {currentTime}
+BOT UPTIME : {currentTime}
 CPU : {progress_bar(cpu)} {cpu}%
 RAM : {progress_bar(mem)} {mem}%
 DISK : {progress_bar(disk)} {disk}%
+
 TOTAL : {total}
 USED : {used} || FREE : {free}
+
 SENT : {sent} || RECV : {recv}
+
+Team Ark Mirror ;)
 """
     return stats
 
