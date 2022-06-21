@@ -260,7 +260,7 @@ def get_readable_message():
             if stats.status() == MirrorStatus.STATUS_UPLOADING:
                num_upload += 1
         msg = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>\n\n"
-        msg +=f"<b>DL: {num_active} || UL: {num_upload} || QUEUED: {num_waiting}</b>\n\n"
+        msg +=f"<b> DL : {num_active}  ||  UL : {num_upload}  ||  QUEUED : {num_waiting}</b>\n\n"
         if STATUS_LIMIT is not None:
             tasks = len(download_dict)
             global pages
