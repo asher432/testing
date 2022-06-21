@@ -342,6 +342,26 @@ def get_readable_message():
             return msg + bmsg, button
         return msg + bmsg, sbutton        
 
+def delete_all_messages():
+    with status_reply_dict_lock:
+        for message in list(status_reply_dict.values()):
+            try:
+                deleteMessage(bot, message)
+                del status_reply_dict[message.chat.id]
+            except Exception as e:
+                LOGGER.error(str(e))
+
+def update_all_messages():
+    msg, buttons = get_readable_message()
+    with status_reply_dict_lock:
+        for chat_id in list(status_reply_dict.keys()):
+            if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
+                if buttons == "":
+                    editMessage(msg, status_reply_dict[chat_id])
+                else:
+                    editMessage(msg, status_reply_dict[chat_id], buttons)
+                status_reply_dict[chat_id].text = msg
+
 def turn(data):
     try:
         with download_dict_lock:
@@ -416,7 +436,7 @@ def bot_sys_stats():
                 num_extract += 1
        if stats.status() == MirrorStatus.STATUS_SPLITTING:
                 num_split += 1
-    stats = f"══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════"
+    stats = f"══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════\n\n"
     stats += f"""
 Bot Uptime: {currentTime}
 DOWN: {recv} | UP: {sent}
