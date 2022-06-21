@@ -54,10 +54,10 @@ def stats(update, context):
 
 <b>Commit Date:</b> {last_commit}
 
-<b>Running Since :</b> {currentTime} | <b>OS Uptime : {osUptime}
+<b>Running Since :</b> {currentTime} | <b>OS Uptime :</b> {osUptime}
 
 <b>DISK :</b> {progress_bar(disk)} {disk}%
-<b>Total :</b> {total} | <b>Used :</b> {used} | <b>Free :</b> 
+<b>Total :</b> {total} | <b>Used :</b> {used} | <b>Free :</b> {free}
 
 <b>CPU :</b> {progress_bar(cpuUsage)} {cpuUsage}%
 <b>Physical :</b> {p_core} | <b>Logical :</b> {t_core}
