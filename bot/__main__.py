@@ -33,7 +33,7 @@ def stats(update, context):
     osUptime = get_readable_time(time.time() - boot_time())
     total, used, free = shutil.disk_usage('.')
     total = get_readable_file_size(total)
-    disk = psutil.disk_usage("/").percent
+    disk = disk_usage("/").percent
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
     sent = get_readable_file_size(net_io_counters().bytes_sent)
