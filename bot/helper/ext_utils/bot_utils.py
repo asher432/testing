@@ -453,8 +453,6 @@ def bot_sys_stats():
 <b>RAM :</b> {progress_bar(mem)} {mem}%
 <b>DISK :</b> {progress_bar(disk)} {disk}%
 
-<b>TOTAL :</b> {total}
-<b>USED :</b> {used} || <b>FREE :</b> {free}
 <b>SENT :</b> {sent} || <b>RECV :</b> {recv}
 
 <b>Team Ark Mirror ;)</b>
