@@ -208,7 +208,7 @@ class TgUploader:
     def speed(self):
         with self.__resource_lock:
             try:
-                return self.uploaded_bytes / (time.time() - self.__start_time)
+                return self.uploaded_bytes / (time() - self.__start_time)
             except ZeroDivisionError:
                 return 0
 
