@@ -50,7 +50,7 @@ def stats(update, context):
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
     stats = f"""
-══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════
+════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣════
 
 <b>Commit Date:</b> {last_commit}
 
