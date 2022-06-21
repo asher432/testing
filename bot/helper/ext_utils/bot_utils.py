@@ -12,8 +12,6 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot import download_dict, download_dict_lock, STATUS_LIMIT, botStartTime, DOWNLOAD_DIR
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
-from bot.helper.telegram_helper.message_utils import *
-
 import shutil
 import psutil
 import logging
@@ -366,23 +364,6 @@ def turn(data):
         return False
     
 ONE, TWO, THREE = range(3)
-
-def refresh(update, context):
-    query = update.callback_query
-    query.edit_message_text(text="Refreshing Status...Please Wait!!")
-    time.sleep(2)
-    update_all_messages()
-    
-def close(update, context):
-    chat_id  = update.effective_chat.id
-    user_id = update.callback_query.from_user.id
-    bot = context.bot
-    query = update.callback_query
-    admins = bot.get_chat_member(chat_id, user_id).status in ['creator', 'administrator'] or user_id in [OWNER_ID]
-    if admins:
-        delete_all_messages()
-    else:
-        query.answer(text="Why are you Gay!", show_alert=True)
         
 def pop_up_stats(update, context):
     query = update.callback_query
