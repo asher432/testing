@@ -46,7 +46,7 @@ def stats(update, context):
     mem_t = get_readable_file_size(memory.total)
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
-    stats = f"═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════\n\n" \
+    stats = f"═════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════\n\n" \
             f'<b>Commit Date:</b> {last_commit}\n'\
             f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n\n' \
             f'<b>DISK INFO</b>\n' \
