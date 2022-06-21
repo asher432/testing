@@ -58,15 +58,14 @@ def stats(update, context):
 <b>OS Uptime :</b> {osUptime}
 
 <b>DISK :</b> {progress_bar(disk)} {disk}%
-<b>Total :</b> {total}
-<b>Used :</b> {used} | <b>Free :</b> {free}
+<b>Total :</b> {total}  ||  <b>Free :</b> {free}
 
 <b>CPU :</b> {progress_bar(cpuUsage)} {cpuUsage}%
-<b>Physical :</b> {p_core} | <b>Logical :</b> {t_core}
+<b>Physical :</b> {p_core} || <b>Logical :</b> {t_core}
 
 <b>RAM :</b> {progress_bar(mem_p)} {mem_p}%
-<b>SWAP :</b> {swap_t} | <b>Total :</b> {mem_t} 
-<b>SWAP Used :</b> {swap_p}| <b>RAM Used :</b> {mem_u} | <b>Free :</b> {mem_a}
+<b>SWAP :</b> {swap_t}  ||  <b>SWAP Used :</b> {swap_p} 
+<b>RAM Total :</b> {mem_t}  ||  <b>Free :</b> {mem_a}
 
 <b>DATA USAGE</b>
 <b>UL</b>: {sent} || <b>DL</b>: {recv}
