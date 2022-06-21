@@ -85,7 +85,7 @@ Type /{BotCommands.HelpCommand} to get a list of available commands
 '''
         sendMarkup(start_string, context.bot, update.message, reply_markup)
     else:
-        sendMarkup('Ark Mirror bot is authorised to work in the mentioned group only', context.bot, update.message, reply_markup)
+        sendMarkup('Oops... You are not authorised to use Ark Mirror bot, Join our channel to use me', context.bot, update.message, reply_markup)
 
 def restart(update, context):
     restart_message = sendMessage("Restarting...", context.bot, update.message)
