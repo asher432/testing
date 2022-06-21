@@ -1,5 +1,6 @@
 from re import match as re_match, findall as re_findall
 from threading import Thread, Event
+import threading
 from time import time
 from math import ceil
 from html import escape
@@ -248,7 +249,18 @@ def progress_bar(percentage):
 
 def get_readable_message():
     with download_dict_lock:
+        num_active = 0
+        num_waiting = 0
+        num_upload = 0
+        for stats in list(download_dict.values()):
+            if stats.status() == MirrorStatus.STATUS_DOWNLOADING:
+               num_active += 1
+            if stats.status() == MirrorStatus.STATUS_WAITING:
+               num_waiting += 1
+            if stats.status() == MirrorStatus.STATUS_UPLOADING:
+               num_upload += 1
         msg = f"<b>═════════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════════</b>\n\n"
+        msg +=f"<b>DL: {num_active} || UL: {num_upload} || QUEUED: {num_waiting}</b>\n\n"
         if STATUS_LIMIT is not None:
             tasks = len(download_dict)
             global pages
@@ -326,7 +338,7 @@ def get_readable_message():
 
         buttons = ButtonMaker()
         buttons.sbutton("Refresh", str(ONE))
-        buttons.sbutton("Statistics", str(THREE))
+        buttons.sbutton("Stats", str(THREE))
         sbutton = InlineKeyboardMarkup(buttons.build_menu(2))
 
         if STATUS_LIMIT is not None and tasks > STATUS_LIMIT:
@@ -459,5 +471,6 @@ SENT : {sent} || RECV : {recv}
 
 dispatcher.add_handler(CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$'))
 dispatcher.add_handler(CallbackQueryHandler(close, pattern='^' + str(TWO) + '$'))
-dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$'))
+dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
+dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern="^" + str(THREE) + "$"))
                        
