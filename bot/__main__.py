@@ -49,16 +49,22 @@ def stats(update, context):
     mem_t = get_readable_file_size(memory.total)
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
-    stats = f"══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════\n\n" \
-            f'<b>Commit Date:</b> {last_commit}\n'\
-            f'<b>Running Since :</b> {currentTime}\n\n' \
-            f'<b>CPU :</b> {progress_bar(cpu)} {cpu}%\n'
-            f'<b>RAM :</b> {progress_bar(memory)} {memory}%\n'
-            f'<b>DISK :</b> {progress_bar(disk)} {disk}%\n\n'
-            f'<b>SWAP :</b>: {progress_bar(swap_p)} {swap}%\n' \
-            f'<b>DATA USAGE</b>\n' \
-            f'<b>UL</b>: {sent} || ' \
-            f'<b>DL</b>: {recv}\n\n'
+    stats = f"""
+══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════
+
+<b>Commit Date:</b> {last_commit}
+
+<b>Running Since :</b> {currentTime}
+
+<b>CPU :</b> {progress_bar(cpu)} {cpu}%
+<b>RAM :</b> {progress_bar(memory)} {memory}%
+<b>DISK :</b> {progress_bar(disk)} {disk}%
+<b>SWAP :</b>: {progress_bar(swap_p)} {swap}%
+
+<b>DATA USAGE</b>
+<b>UL</b>: {sent} || <b>DL</b>: {recv}
+
+"""
     keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
     main = sendMarkup(stats, context.bot, update.message, reply_markup=InlineKeyboardMarkup(keyboard))
 
