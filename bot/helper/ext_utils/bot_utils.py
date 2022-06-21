@@ -304,10 +304,10 @@ def get_readable_message():
                 msg += f"\n<code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             else:
                 msg += f"\n<b>Size : </b>{download.size()}"
-            msg += "\n\n"
+            msg += "\n"
             if STATUS_LIMIT is not None and index == STATUS_LIMIT:
                 break
-        bmsg = f"\n<b>--------------------------------------------</b>"
+        bmsg = f"\n<b>--------------------------------------------</b>\n"
         dlspeed_bytes = 0
         upspeed_bytes = 0
         for download in list(download_dict.values()):
@@ -358,7 +358,18 @@ def update_all_messages():
                 else:
                     editMessage(msg, status_reply_dict[chat_id], buttons)
                 status_reply_dict[chat_id].text = msg
-
+                
+def editMessage(text: str, message: Message, reply_markup=None):
+    try:
+        bot.editMessageText(text=text, message_id=message.message_id,chat_id=message.chat.id,reply_markup=reply_markup,parse_mode='HTMl', disable_web_page_preview=True)
+    except RetryAfter as r:
+        LOGGER.warning(str(r))
+        sleep(r.retry_after * 1.5)
+        return editMessage(text, message, reply_markup)
+    except Exception as e:
+        LOGGER.error(str(e))
+        return
+    
 def turn(data):
     try:
         with download_dict_lock:
