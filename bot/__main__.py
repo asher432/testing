@@ -13,7 +13,7 @@ import shutil
 from bot import bot, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, LOGGER, Interval, INCOMPLETE_TASK_NOTIFIER, DB_URI, alive, app, main_loop
 from .helper.ext_utils.fs_utils import start_cleanup, clean_all, exit_clean_up
 from .helper.ext_utils.telegraph_helper import telegraph
-from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
+from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time, progress_bar
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.message_utils import sendMessage, sendMarkup, editMessage, sendLogFile
@@ -33,6 +33,7 @@ def stats(update, context):
     osUptime = get_readable_time(time.time() - boot_time())
     total, used, free = shutil.disk_usage('.')
     total = get_readable_file_size(total)
+    disk = psutil.disk_usage("/").percent
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
     sent = get_readable_file_size(net_io_counters().bytes_sent)
@@ -48,22 +49,16 @@ def stats(update, context):
     mem_t = get_readable_file_size(memory.total)
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
-    stats = f"═════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════\n\n" \
+    stats = f"══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════\n\n" \
             f'<b>Commit Date:</b> {last_commit}\n'\
-            f'Rᴜɴɴɪɴɢ Sɪɴᴄᴇ : {currentTime}\n\n' \
-            f'<b>DISK INFO</b>\n' \
-            f'<b><i>Total</i></b>: {total}\n' \
-            f'<b><i>Used</i></b>: {used} ~ ' \
-            f'<b><i>Free</i></b>: {free}\n\n' \
+            f'<b>Running Since :</b> {currentTime}\n\n' \
+            f'<b>CPU :</b> {progress_bar(cpu)} {cpu}%\n'
+            f'<b>RAM :</b> {progress_bar(memory)} {memory}%\n'
+            f'<b>DISK :</b> {progress_bar(disk)} {disk}%\n\n'
+            f'<b>SWAP :</b>: {progress_bar(swap_p)} {swap}%\n' \
             f'<b>DATA USAGE</b>\n' \
-            f'<b><i>UL</i></b>: {sent} ~ ' \
-            f'<b><i>DL</i></b>: {recv}\n\n' \
-            f'<b>SERVER STATS</b>\n' \
-            f'<b><i>CPU</i></b>: {cpuUsage}%\n' \
-            f'<b><i>RAM</i></b>: {mem_t} ~ ' \
-            f'<b><i>USED</i></b>: {mem_p}%\n' \
-            f'<b><i>SWAP</i></b>: {swap_t} ~ ' \
-            f'<b><i>USED</i></b>: {swap_p}%'
+            f'<b>UL</b>: {sent} || ' \
+            f'<b>DL</b>: {recv}\n\n'
     keyboard = [[InlineKeyboardButton("CLOSE", callback_data="stats_close")]]
     main = sendMarkup(stats, context.bot, update.message, reply_markup=InlineKeyboardMarkup(keyboard))
 
