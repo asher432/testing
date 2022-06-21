@@ -54,15 +54,17 @@ def stats(update, context):
 
 <b>Commit Date:</b> {last_commit}
 
-<b>Running Since :</b> {currentTime}
+<b>Running Since :</b> {currentTime} | <b>OS Uptime : {osUptime}
 
-<b>CPU :</b> {progress_bar(cpuUsage)} {cpuUsage}% 
+<b>DISK :</b> {progress_bar(disk)} {disk}%
+<b>Total :</b> {total} | <b>Used :</b> {used} | <b>Free :</b> 
 
-<b>RAM :</b> {progress_bar(mem_p)} {mem_p}% of {memory}
+<b>CPU :</b> {progress_bar(cpuUsage)} {cpuUsage}%
+<b>Physical :</b> {p_core} | <b>Logical :</b> {t_core}
 
-<b>DISK :</b> {progress_bar(disk)} {disk}% of {total}
-
-<b>SWAP :</b> {progress_bar(swap_p)} {swap_p}% of {swap}
+<b>RAM :</b> {progress_bar(mem_p)} {mem_p}%
+<b>SWAP :</b> {swap_t} | <b>Used :</b> {swap}
+<b>Total :</b> {mem_t} | <b>Used :</b> {mem_u} | <b>Free :</b> {mem_a}
 
 <b>DATA USAGE</b>
 <b>UL</b>: {sent} || <b>DL</b>: {recv}
