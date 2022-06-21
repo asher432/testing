@@ -446,11 +446,17 @@ def bot_sys_stats():
                 num_split += 1
     stats = f"══════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣══════\n\n"
     stats += f"""
-Bot Uptime: {currentTime}
-DOWN: {recv} | UP: {sent}
-CPU: {cpu}% | RAM: {mem}%
-Disk: {total} | Free: {free}
-Used: {disk}% is {used}
+BOT UPTIME 🕐 : {currentTime}
+
+CPU : {progress_bar(cpu)} {cpu}%
+RAM : {progress_bar(mem)} {mem}%
+DISK : {progress_bar(disk)} {disk}%
+
+TOTAL : {total}
+
+USED : {used} || FREE : {free}
+
+SENT : {sent} || RECV : {recv}
 """
     return stats
 
