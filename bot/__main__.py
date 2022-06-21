@@ -56,10 +56,10 @@ def stats(update, context):
 
 <b>Running Since :</b> {currentTime}
 
-<b>CPU :</b> {progress_bar(cpu)} {cpu}%
-<b>RAM :</b> {progress_bar(memory)} {memory}%
+<b>CPU :</b> {progress_bar(cpuUsage)} {cpuUsage}%
+<b>RAM :</b> {progress_bar(mem_p)} {mem_p}%
 <b>DISK :</b> {progress_bar(disk)} {disk}%
-<b>SWAP :</b>: {progress_bar(swap_p)} {swap}%
+<b>SWAP :</b>: {progress_bar(swap_p)} {swap_p}%
 
 <b>DATA USAGE</b>
 <b>UL</b>: {sent} || <b>DL</b>: {recv}
