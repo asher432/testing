@@ -363,8 +363,69 @@ def turn(data):
     except:
         return False
     
+def update_all_messages():
+    currentTime = get_readable_time((time.time() - botStartTime))
+    msg = get_readable_message()
+    with download_dict_lock:
+        dlspeed_bytes = 0
+        uldl_bytes = 0
+        for download in list(download_dict.values()):
+            speedy = download.speed()
+            if download.status() == MirrorStatus.STATUS_DOWNLOADING:
+                if 'K' in speedy:
+                    dlspeed_bytes += float(speedy.split('K')[0]) * 1024
+                elif 'M' in speedy:
+                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
+            if download.status() == MirrorStatus.STATUS_UPLOADING:
+                if 'K' in speedy:
+            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
+                elif 'M' in speedy:
+                    uldl_bytes += float(speedy.split('M')[0]) * 1048576
+        dlspeed = get_readable_file_size(dlspeed_bytes)
+        ulspeed = get_readable_file_size(uldl_bytes)
+        msg += f"<b>DL :</b> <b>{dlspeed}ps</b> || <b>UL :</b> <b>{ulspeed}ps</b>\n"
+    with status_reply_dict_lock:
+        for chat_id in list(status_reply_dict.keys()):
+            if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
+                if len(msg) == 0:
+                    msg = "Starting DL"
+                try:
+                    keyboard = [[InlineKeyboardButton(" REFRESH ", callback_data=str(ONE)),
+                                 InlineKeyboardButton(" CLOSE ", callback_data=str(TWO)),],
+                                [InlineKeyboardButton(" STATISTICS ", callback_data=str(THREE)),]]
+                    editMessage(msg, status_reply_dict[chat_id], reply_markup=InlineKeyboardMarkup(keyboard))
+                except Exception as e:
+                    LOGGER.error(str(e))
+                status_reply_dict[chat_id].text = msg
+ 
+def delete_all_messages():
+    with status_reply_dict_lock:
+        for message in list(status_reply_dict.values()):
+            try:
+                deleteMessage(bot, message)
+                del status_reply_dict[message.chat.id]
+            except Exception as e:
+                LOGGER.error(str(e))
+                
 ONE, TWO, THREE = range(3)
         
+def refresh(update, context):
+    query = update.callback_query
+    query.edit_message_text(text="Refreshing Status...Please Wait!!")
+    time.sleep(2)
+    update_all_messages()
+    
+def close(update, context):
+    chat_id  = update.effective_chat.id
+    user_id = update.callback_query.from_user.id
+    bot = context.bot
+    query = update.callback_query
+    admins = bot.get_chat_member(chat_id, user_id).status in ['creator', 'administrator'] or user_id in [OWNER_ID]
+    if admins:
+        delete_all_messages()
+    else:
+        query.answer(text="Why are you Gay!", show_alert=True)
+
 def pop_up_stats(update, context):
     query = update.callback_query
     stats = bot_sys_stats()
