@@ -15,7 +15,6 @@ from bot.helper.mirror_utils.download_utils.direct_link_generator import *
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from telegram import ParseMode
 
-
 def _clone(message, bot, multi=0):
     if BOT_PM:
         try:
@@ -120,7 +119,7 @@ def _clone(message, bot, multi=0):
                     update_all_messages()
             except IndexError:
                 pass
-        cc = f"\n\n<b>cc: </b>{tag}"
+        cc = f"\n\n<b>#Cloned cc: </b>{tag}"
         if button in ["cancelled", ""]:
             sendMessage(f"{tag} {result}", bot, message)
         else:
