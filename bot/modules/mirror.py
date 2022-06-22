@@ -205,50 +205,10 @@ class MirrorListener:
 
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
         buttons = ButtonMaker()
-        mesg = self.message.text.split('\n')
-        message_args = mesg[0].split(' ', maxsplit=1)
-        reply_to = self.message.reply_to_message
-        if self.message.chat.type != 'private' and AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
-            if reply_to is not None:
-                try:
-                    reply_to.delete()
-                except Exception as error:
-                    LOGGER.warning(error)
-                    pass
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
         if self.isLeech:
-          if SOURCE_LINK is True:
-            try:
-                source_link = message_args[1]
-                if is_magnet(source_link):
-                    link = telegraph.create_page(
-                    title='Ark-Mirror Source Link',
-                    content=source_link,
-                )["path"]
-                    buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/<code>{link}</code>")
-                else:
-                    buttons.buildbutton(f"🔗 Source Link", source_link)
-            except Exception as e:
-                LOGGER.warning(e)
-            pass
-            if reply_to is not None:
-                try:
-                    reply_text = reply_to.text
-                    if is_url(reply_text):
-                        source_link = reply_text.strip()
-                        if is_magnet(source_link):
-                            link = telegraph.create_page(
-                                title='Ark-Mirror Source Link',
-                                content=source_link,
-                            )["path"]
-                            buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
-                        else:
-                            buttons.buildbutton(f"🔗 Source Link", source_link)
-                except Exception as e:
-                    LOGGER.warning(e)
-                    pass
             if BOT_PM:
                 bot_d = bot.get_me()
                 b_uname = bot_d.username
@@ -260,18 +220,17 @@ class MirrorListener:
             msg += f'\n\n<b>Hey </b>{self.tag} <b>Your Task is Complete.</b>\n'
             msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}'
             if not files:
-                uploadmsg = sendMessage(msg, self.bot, self.message)
+                sendMessage(msg, self.bot, self.message)
             else:
                 fmsg = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"\n\n{index}. <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
-                        uploadmsg = sendMarkup(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+                        sendMessage(msg + fmsg, self.bot, self.message)
                         sleep(1)
                         fmsg = ''
                 if fmsg != '':
-                    uploadmsg = sendMarkup(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
-                    Thread(target=auto_delete_upload_message, args=(bot, self.message, uploadmsg)).start()
+                    sendMessage(msg + fmsg, self.bot, self.message)
         else:
             msg += f'\n\n<b>Type: </b>{typ}'
             if ospath.isdir(f'{DOWNLOAD_DIR}{self.uid}/{name}'):
@@ -302,7 +261,8 @@ class MirrorListener:
                 buttons.buildbutton(f"{BUTTON_FIVE_NAME}", f"{BUTTON_FIVE_URL}")
             if BUTTON_SIX_NAME is not None and BUTTON_SIX_URL is not None:
                 buttons.buildbutton(f"{BUTTON_SIX_NAME}", f"{BUTTON_SIX_URL}")
-            uploadmsg  = sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            """
             if SOURCE_LINK is True:
                 try:
                     source_link = message_args[1]
@@ -335,6 +295,7 @@ class MirrorListener:
                     pass
             uploadmsg = sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
             Thread(target=auto_delete_upload_message, args=(bot, self.message, uploadmsg)).start()
+            """
             if MIRROR_LOGS:
                 try:
                     for chatid in MIRROR_LOGS:
