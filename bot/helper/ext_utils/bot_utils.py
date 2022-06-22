@@ -8,7 +8,6 @@ from math import ceil
 from html import escape
 from psutil import virtual_memory, cpu_percent, disk_usage
 from requests import head as rhead
-from urlib.requests import urlopen
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.error import TimedOut, BadRequest, RetryAfter
