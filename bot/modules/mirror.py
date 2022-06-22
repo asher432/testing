@@ -1,6 +1,6 @@
 from base64 import b64encode
 from email import message
-from requests import utils as rutils
+from requests import utils as rutils, get as rget
 from re import match as re_match, search as re_search, split as re_split
 from time import sleep, time
 from os import path as ospath, remove as osremove, listdir, walk
