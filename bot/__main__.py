@@ -50,7 +50,7 @@ def stats(update, context):
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
     stats = f"""
-═════〣 ᴀʀᴋ ᴍɪʀʀᴏʀ 〣═════
+══════〣 ARK MIRROR 〣══════
 
 <b>Commit Date:</b> {last_commit}
 
@@ -244,7 +244,10 @@ def main():
                      bot.editMessageText(msg, chat_id, msg_id, parse_mode='HTMl', disable_web_page_preview=True)
                      osremove(".restartmsg")
                 else:
-                    bot.sendMessage(cid, msg, 'HTML')
+                    try:
+                        bot.sendMessage(cid, msg, 'HTML')
+                    except Exception as e:
+                        LOGGER.error(e)
 
     if ospath.isfile(".restartmsg"):
         with open(".restartmsg") as f:
