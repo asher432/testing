@@ -24,12 +24,14 @@ MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
 
 URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 
+"""
 COUNT = 0
 PAGE_NO = 1
 
 FINISHED_PROGRESS_STR = "▰"
 UNFINISHED_PROGRESS_STR = "▱"
 PROGRESS_MAX_SIZE = 100 // 8
+"""
 
 class MirrorStatus:
     STATUS_UPLOADING = "Uploading..."
@@ -201,7 +203,7 @@ def get_content_type(link: str) -> str:
         except:
             content_type = None
     return content_type
-
+"""
 def get_progress_bar_string(status):
     completed = status.processed_bytes() / 8
     total = status.size_raw() / 8
@@ -221,8 +223,6 @@ def get_progress_bar_string(status):
     return p_str
 
 def progress_bar(percentage):
-    """Returns a progress bar for download
-    """
     #percentage is on the scale of 0-1
     comp = FINISHED_PROGRESS_STR
     ncomp = UNFINISHED_PROGRESS_STR
@@ -444,6 +444,7 @@ def bot_sys_stats():
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
     stats = f"""
+"""
 <b>CPU :</b> {progress_bar(cpu)} {cpu}%
 <b>RAM :</b> {progress_bar(mem)} {mem}%
 <b>DISK :</b> {progress_bar(disk)} {disk}%
@@ -452,9 +453,10 @@ def bot_sys_stats():
 
 <b>Team Ark Mirror ;)</b>
 """
+"""
     return stats
 
 dispatcher.add_handler(CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$'))
 dispatcher.add_handler(CallbackQueryHandler(close, pattern='^' + str(TWO) + '$'))
 dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$'))
-                       
+"""                      
