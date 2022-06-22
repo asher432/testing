@@ -4,8 +4,8 @@ from threading import Thread
 from telegram.ext import CommandHandler, CallbackQueryHandler
 
 from bot import dispatcher, status_reply_dict, status_reply_dict_lock, download_dict, download_dict_lock, botStartTime, DOWNLOAD_DIR
-from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, auto_delete_message, sendStatusMessage, update_all_messages, turn
-from bot.helper.ext_utils.bot_utils import get_readable_time, get_readable_file_size
+from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, auto_delete_message, sendStatusMessage, update_all_messages
+from bot.helper.ext_utils.bot_utils import get_readable_time, get_readable_file_size, turn
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 
