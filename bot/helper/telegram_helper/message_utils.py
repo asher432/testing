@@ -129,6 +129,18 @@ def delete_all_messages():
                 del status_reply_dict[message.chat.id]
             except Exception as e:
                 LOGGER.error(str(e))
+                
+def auto_delete_upload_message(bot, cmd_message: Message, bot_message: Message):
+    if cmd_message.chat.type == 'private':
+        pass
+    elif AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
+        sleep(AUTO_DELETE_UPLOAD_MESSAGE_DURATION)
+        try:
+            # Skip if None is passed meaning we don't want to delete bot or cmd message
+            deleteMessage(bot, cmd_message)
+            deleteMessage(bot, bot_message)
+        except AttributeError:
+            pass                
 
 def update_all_messages():
     msg, buttons = get_readable_message()
