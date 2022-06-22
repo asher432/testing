@@ -1,27 +1,25 @@
+import shutil, psutil
+import logging
+import threading
 from re import match as re_match, findall as re_findall
 from threading import Thread, Event
-import threading
 from time import time
 from math import ceil
 from html import escape
 from psutil import virtual_memory, cpu_percent, disk_usage
 from requests import head as rhead
-from urllib.request import urlopen
+from urlib.requests import urlopen
+
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot import download_dict, download_dict_lock, STATUS_LIMIT, botStartTime, DOWNLOAD_DIR
-from bot.helper.telegram_helper.button_build import ButtonMaker
-
-import shutil
-import psutil
-import logging
-from telegram.error import TimedOut, BadRequest,RetryAfter
-from pyrogram.errors import FloodWait
-from telegram.ext import CallbackQueryHandler, CallbackContext
+from telegram.error import TimedOut, BadRequest, RetryAfter
 from telegram.message import Message
 from telegram.update import Update
+from pyrogram.errors import FloodWait
+from telegram.ext import CallbackQueryHandler, CallbackContext
+
 from bot import *
+from bot.helper.telegram_helper.bot_commands import BotCommands
+from bot.helper.telegram_helper.button_build import ButtonMaker
 
 MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
 
@@ -233,7 +231,6 @@ def progress_bar(percentage):
 
     if isinstance(percentage, str):
         return "NaN"
-
     try:
         percentage=int(percentage)
     except:
@@ -290,18 +287,18 @@ def get_readable_message():
                 try:
                     msg += f"\n<b>sᴇᴇᴅᴇʀs :</b> {download.aria_download().num_seeders}" \
                            f" | <b>ᴘᴇᴇʀs :</b> {download.aria_download().connections}"
-                    msg += f"\n<b>ᴇɴɢɪɴᴇ :</b><code>Aria2c</code>"
+                    msg += f"\n<b>ᴇɴɢɪɴᴇ : Aria2c</b>"
                 except:
                     pass
                 try:
                     msg += f"\n<b>sᴇᴇᴅᴇʀs :</b> {download.torrent_info().num_seeds}" \
                            f" | <b>ʟᴇᴇᴄʜᴇʀs :</b> {download.torrent_info().num_leechs}"
-                    msg += f"\n<b>ᴇɴɢɪɴᴇ :</b><code>qBittorrent</code>"
+                    msg += f"\n<b>ᴇɴɢɪɴᴇ : qBittorrent</b>"
                 except:
                     pass
                 try:
                     if download.status() == MirrorStatus.STATUS_UPLOADING:
-                        msg += f"\n<b>ᴇɴɢɪɴᴇ :</b> <code>Google Api</code>"
+                        msg += f"\n<b>ᴇɴɢɪɴᴇ : Google Api</code></b>"
                 except BaseException:
                     pass
                 msg += f'\n<b>Requested User : </b> ️<code>{download.message.from_user.first_name}</code>️(<code>{download.message.from_user.id}</code>)'
@@ -316,7 +313,7 @@ def get_readable_message():
                 msg += f"\n<code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             else:
                 msg += f"\n<b>Size : </b>{download.size()}"
-            msg += "\n\n<b>▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</b>\n\n"
+            msg += "\n\n<b>▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</b>\n\n"
             if STATUS_LIMIT is not None and index == STATUS_LIMIT:
                 break
         bmsg = f""
