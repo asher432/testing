@@ -178,6 +178,13 @@ class MirrorListener:
             drive.upload(up_name)
 
     def onDownloadError(self, error):
+        reply_to = self.message.reply_to_message
+        if reply_to is not None:
+            try:
+                reply_to.delete()
+            except Exception as error:
+                LOGGER.warning(error)
+                pass
         error = error.replace('<', ' ').replace('>', ' ')
         clean_download(f'{DOWNLOAD_DIR}{self.uid}')
         with download_dict_lock:
@@ -198,6 +205,16 @@ class MirrorListener:
 
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
         buttons = ButtonMaker()
+        mesg = self.message.text.split('\n')
+        message_args = mesg[0].split(' ', maxsplit=1)
+        reply_to = self.message.reply_to_message
+        if self.message.chat.type != 'private' and AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
+            if reply_to is not None:
+                try:
+                    reply_to.delete()
+                except Exception as error:
+                    LOGGER.warning(error)
+                    pass
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
@@ -285,7 +302,39 @@ class MirrorListener:
                 buttons.buildbutton(f"{BUTTON_FIVE_NAME}", f"{BUTTON_FIVE_URL}")
             if BUTTON_SIX_NAME is not None and BUTTON_SIX_URL is not None:
                 buttons.buildbutton(f"{BUTTON_SIX_NAME}", f"{BUTTON_SIX_URL}")
-            sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            uploadmsg  = sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            if SOURCE_LINK is True:
+                try:
+                    source_link = message_args[1]
+                    if is_magnet(source_link):
+                        link = telegraph.create_page(
+                            title='Helios-Mirror Source Link',
+                            content=source_link,
+                        )["path"]
+                        buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                    else:
+                        buttons.buildbutton(f"🔗 Source Link", source_link)
+                except Exception as e:
+                    LOGGER.warning(e)
+                    pass
+            if reply_to is not None:
+                try:
+                    reply_text = reply_to.text
+                    if is_url(reply_text):
+                        source_link = reply_text.strip()
+                        if is_magnet(source_link):
+                            link = telegraph.create_page(
+                                title='Helios-Mirror Source Link',
+                                content=source_link,
+                            )["path"]
+                            buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                        else:
+                            buttons.buildbutton(f"🔗 Source Link", source_link)
+                except Exception as e:
+                    LOGGER.warning(e)
+                    pass
+            uploadmsg = sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+            Thread(target=auto_delete_upload_message, args=(bot, self.message, uploadmsg)).start()
             if MIRROR_LOGS:
                 try:
                     for chatid in MIRROR_LOGS:
@@ -322,6 +371,13 @@ class MirrorListener:
             update_all_messages()
 
     def onUploadError(self, error):
+        reply_to = self.message.reply_to_message
+        if reply_to is not None:
+            try:
+                reply_to.delete()
+            except Exception as error:
+                LOGGER.warning(f"ewww {error}")
+                pass
         e_str = error.replace('<', '').replace('>', '')
         clean_download(f'{DOWNLOAD_DIR}{self.uid}')
         with download_dict_lock:
@@ -488,7 +544,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                     LOGGER.error(str(e))
                     return sendMessage(tag + " " + error, bot, message)
         else:
-            msg = "Qb commands for torrents only. if you are trying to dowload torrent then report."
+            msg = "Qb commands for torrents only."
             return sendMessage(msg, bot, message)
 
     listener = MirrorListener(bot, message, isZip, extract, isQbit, isLeech, pswd, tag)
