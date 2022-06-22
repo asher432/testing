@@ -203,7 +203,7 @@ def get_content_type(link: str) -> str:
         except:
             content_type = None
     return content_type
-"""
+
 def get_progress_bar_string(status):
     completed = status.processed_bytes() / 8
     total = status.size_raw() / 8
@@ -444,7 +444,6 @@ def bot_sys_stats():
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
     stats = f"""
-"""
 <b>CPU :</b> {progress_bar(cpu)} {cpu}%
 <b>RAM :</b> {progress_bar(mem)} {mem}%
 <b>DISK :</b> {progress_bar(disk)} {disk}%
@@ -453,10 +452,8 @@ def bot_sys_stats():
 
 <b>Team Ark Mirror ;)</b>
 """
-"""
     return stats
 
 dispatcher.add_handler(CallbackQueryHandler(refresh, pattern='^' + str(ONE) + '$'))
 dispatcher.add_handler(CallbackQueryHandler(close, pattern='^' + str(TWO) + '$'))
-dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$'))
-"""                      
+dispatcher.add_handler(CallbackQueryHandler(pop_up_stats, pattern='^' + str(THREE) + '$'))                    
