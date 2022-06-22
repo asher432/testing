@@ -13,7 +13,8 @@ from telegram.ext import CommandHandler
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
 from bot import bot, Interval, INDEX_URL, BUTTON_FOUR_NAME, BUTTON_FOUR_URL, BUTTON_FIVE_NAME, BUTTON_FIVE_URL, \
                 BUTTON_SIX_NAME, BUTTON_SIX_URL, VIEW_LINK, aria2, QB_SEED, dispatcher, DOWNLOAD_DIR, \
-                download_dict, download_dict_lock, TG_SPLIT_SIZE, LOGGER, MEGA_KEY, DB_URI, INCOMPLETE_TASK_NOTIFIER, SOURCE_LINK, BOT_PM, LEECH_LOG, MIRROR_LOGS
+                download_dict, download_dict_lock, TG_SPLIT_SIZE, LOGGER, MEGA_KEY, DB_URI, INCOMPLETE_TASK_NOTIFIER, \
+                SOURCE_LINK, BOT_PM, LEECH_LOG, MIRROR_LOGS, AUTO_DELETE_UPLOAD_MESSAGE_DURATION
 from bot.helper.ext_utils.bot_utils import is_url, is_magnet, is_gdtot_link, is_mega_link, is_gdrive_link, get_content_type
 from bot.helper.ext_utils.fs_utils import get_base_name, get_path_size, split_file, clean_download
 from bot.helper.ext_utils.shortenurl import short_url
@@ -33,7 +34,8 @@ from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, delete_all_messages, update_all_messages, auto_delete_message
+from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, delete_all_messages, update_all_messages, \
+                                                         auto_delete_message, auto_delete_upload_message
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 
@@ -196,6 +198,16 @@ class MirrorListener:
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
         buttons = ButtonMaker()
         # this is inspired by def mirror to get the link from message
+        mesg = self.message.text.split('\n')
+        message_args = mesg[0].split(' ', maxsplit=1)
+        reply_to = self.message.reply_to_message
+        if self.message.chat.type != 'private' and AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
+            if reply_to is not None:
+                try:
+                    reply_to.delete()
+                except Exception as error:
+                    LOGGER.warning(error)
+                    pass
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
@@ -208,9 +220,9 @@ class MirrorListener:
                     title='Ark-Mirror Source Link',
                     content=source_link,
                 )["path"]
-                    buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                    buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/<code>{link}</code>")
                 else:
-                    buttons.buildbutton(f"🔗 Source Link", source_link)
+                    buttons.buildbutton(f"🔗 Source Link", f"<code>{source_link}</code>")
             except Exception as e:
                 LOGGER.warning(e)
             pass
@@ -226,7 +238,7 @@ class MirrorListener:
                             )["path"]
                             buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
                         else:
-                            buttons.buildbutton(f"🔗 Source Link", "source_link")
+                            buttons.buildbutton(f"🔗 Source Link", f"<code>{source_link}</code>")
                 except Exception as e:
                     LOGGER.warning(e)
                     pass
@@ -238,20 +250,21 @@ class MirrorListener:
             msg += f'\n<b>Total Files: </b>{folders}'
             if typ != 0:
                 msg += f'\n<b>Corrupted Files: </b>{typ}'
-            msg += f'\n\n<b>Hey </b>{self.tag} <b>Your Task is Complete.</b>'
+            msg += f'\n\n<b>Hey </b>{self.tag} <b>Your Task is Complete.</b>\n'
             msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}'
             if not files:
-                sendMessage(msg, self.bot, self.message)
+                uploadmsg = sendMessage(msg, self.bot, self.message)
             else:
                 fmsg = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
-                        sendMessage(msg + fmsg, self.bot, self.message)
+                        uploadmsg = sendMarkup(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
                         sleep(1)
                         fmsg = ''
                 if fmsg != '':
-                    sendMessage(msg + fmsg, self.bot, self.message)
+                    uploadmsg = sendMarkup(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+                    Thread(target=auto_delete_upload_message, args=(bot, self.message, uploadmsg)).start()
         else:
             msg += f'\n\n<b>Type: </b>{typ}'
             if ospath.isdir(f'{DOWNLOAD_DIR}{self.uid}/{name}'):
