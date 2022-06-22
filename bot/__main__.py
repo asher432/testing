@@ -3,7 +3,6 @@ from os import path as ospath, remove as osremove, execl as osexecl
 from subprocess import run as srun, check_output
 from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, boot_time
 from time import time
-import time
 import threading
 import importlib
 from sys import executable
@@ -19,18 +18,15 @@ from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.message_utils import sendMessage, sendMarkup, editMessage, sendLogFile
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.button_build import ButtonMaker
-
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete, count, leech_settings, search, rss
-
-
 def stats(update, context):
     global main
     if ospath.exists('.git'):
         last_commit = check_output(["git log -1 --date=short --pretty=format:'%cd <b>From</b> %cr'"], shell=True).decode()
     else:
         last_commit = 'No UPSTREAM_REPO'
-    currentTime = get_readable_time(time.time() - botStartTime)
-    osUptime = get_readable_time(time.time() - boot_time())
+    currentTime = get_readable_time(time() - botStartTime)
+    osUptime = get_readable_time(time() - boot_time())
     total, used, free = shutil.disk_usage('.')
     total = get_readable_file_size(total)
     disk = disk_usage("/").percent
@@ -111,9 +107,9 @@ def restart(update, context):
 
 
 def ping(update, context):
-    start_time = int(round(time.time() * 1000))
+    start_time = int(round(time() * 1000))
     reply = sendMessage("Starting Ping", context.bot, update.message)
-    end_time = int(round(time.time() * 1000))
+    end_time = int(round(time() * 1000))
     editMessage(f'{end_time - start_time} ms', reply)
 
 
