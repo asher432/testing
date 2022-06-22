@@ -19,7 +19,7 @@ from telegram.ext import CallbackQueryHandler, CallbackContext
 from bot import *
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
-from bot.helper.ext_utils.bot_utils import setInterval, MirrorStatus
+from bot.helper.ext_utils.bot_utils import *
 
 COUNT = 0
 PAGE_NO = 1
