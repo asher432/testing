@@ -104,109 +104,7 @@ async def sendRss_pyro(text: str):
     except Exception as e:
         LOGGER.error(str(e))
         return
-
-def deleteMessage(bot, message: Message):
-    try:
-        bot.deleteMessage(chat_id=message.chat.id,
-                           message_id=message.message_id)
-    except Exception as e:
-        LOGGER.error(str(e))
-
-def sendLogFile(bot, message: Message):
-    with open('log.txt', 'rb') as f:
-        bot.sendDocument(document=f, filename=f.name,
-                          reply_to_message_id=message.message_id,
-                          chat_id=message.chat_id)
-
-def auto_delete_message(bot, cmd_message: Message, bot_message: Message):
-    if AUTO_DELETE_MESSAGE_DURATION != -1:
-        sleep(AUTO_DELETE_MESSAGE_DURATION)
-        try:
-            # Skip if None is passed meaning we don't want to delete bot xor cmd message
-            deleteMessage(bot, cmd_message)
-            deleteMessage(bot, bot_message)
-        except AttributeError:
-            pass
-
-def delete_all_messages():
-    with status_reply_dict_lock:
-        for message in list(status_reply_dict.values()):
-            try:
-                deleteMessage(bot, message)
-                del status_reply_dict[message.chat.id]
-            except Exception as e:
-                LOGGER.error(str(e))
-
-def update_all_messages():
-    msg, buttons = get_readable_message()
-    with status_reply_dict_lock:
-        for chat_id in list(status_reply_dict.keys()):
-            if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
-                if buttons == "":
-                    editMessage(msg, status_reply_dict[chat_id])
-                else:
-                    editMessage(msg, status_reply_dict[chat_id], buttons)
-                status_reply_dict[chat_id].text = msg
-
-def sendStatusMessage(msg, bot):
-    if len(Interval) == 0:
-        Interval.append(setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
-    progress, buttons = get_readable_message()
-    with status_reply_dict_lock:
-        if msg.chat.id in list(status_reply_dict.keys()):
-            try:
-                message = status_reply_dict[msg.chat.id]
-                deleteMessage(bot, message)
-                del status_reply_dict[msg.chat.id]
-            except Exception as e:
-                LOGGER.error(str(e))
-                del status_reply_dict[msg.chat.id]
-        if buttons == "":
-            message = sendMessage(progress, bot, msg)
-        else:
-            message = sendMarkup(progress, bot, msg, buttons)
-        status_reply_dict[msg.chat.id] = message
-        
-def get_progress_bar_string(status):
-    completed = status.processed_bytes() / 8
-    total = status.size_raw() / 8
-    if total == 0:
-        p = 0
-    else:
-        p = round(completed * 100 / total)
-    p = min(max(p, 0), 100)
-    cFull = p // 8
-    cPart = p % 8 - 1
-    p_str = FINISHED_PROGRESS_STR * cFull
-    if cPart >= 0:
-        # p_str += PROGRESS_INCOMPLETE[cPart]
-        p_str += FINISHED_PROGRESS_STR
-    p_str += UNFINISHED_PROGRESS_STR * (PROGRESS_MAX_SIZE - cFull)
-    p_str = f"[{p_str}]"
-    return p_str
-
-def progress_bar(percentage):
-    """Returns a progress bar for download
-    """
-    #percentage is on the scale of 0-1
-    comp = FINISHED_PROGRESS_STR
-    ncomp = UNFINISHED_PROGRESS_STR
-    pr = ""
-
-    if isinstance(percentage, str):
-        return "NaN"
-    try:
-        percentage=int(percentage)
-    except:
-        percentage = 0
-
-    for i in range(1,11):
-        if i <= int(percentage/10):
-            pr += comp
-        else:
-            pr += ncomp
-    return pr
-
+    
 def get_readable_message():
     with download_dict_lock:
         num_active = 0
@@ -311,6 +209,108 @@ def get_readable_message():
             button = InlineKeyboardMarkup(buttons.build_menu(3))
             return msg + bmsg, button
         return msg + bmsg, 
+
+def deleteMessage(bot, message: Message):
+    try:
+        bot.deleteMessage(chat_id=message.chat.id,
+                           message_id=message.message_id)
+    except Exception as e:
+        LOGGER.error(str(e))
+
+def sendLogFile(bot, message: Message):
+    with open('log.txt', 'rb') as f:
+        bot.sendDocument(document=f, filename=f.name,
+                          reply_to_message_id=message.message_id,
+                          chat_id=message.chat_id)
+
+def auto_delete_message(bot, cmd_message: Message, bot_message: Message):
+    if AUTO_DELETE_MESSAGE_DURATION != -1:
+        sleep(AUTO_DELETE_MESSAGE_DURATION)
+        try:
+            # Skip if None is passed meaning we don't want to delete bot xor cmd message
+            deleteMessage(bot, cmd_message)
+            deleteMessage(bot, bot_message)
+        except AttributeError:
+            pass
+
+def delete_all_messages():
+    with status_reply_dict_lock:
+        for message in list(status_reply_dict.values()):
+            try:
+                deleteMessage(bot, message)
+                del status_reply_dict[message.chat.id]
+            except Exception as e:
+                LOGGER.error(str(e))
+
+def update_all_messages():
+    msg, buttons = get_readable_message()
+    with status_reply_dict_lock:
+        for chat_id in list(status_reply_dict.keys()):
+            if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
+                if buttons == "":
+                    editMessage(msg, status_reply_dict[chat_id])
+                else:
+                    editMessage(msg, status_reply_dict[chat_id], buttons)
+                status_reply_dict[chat_id].text = msg
+
+def sendStatusMessage(msg, bot):
+    if len(Interval) == 0:
+        Interval.append(setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
+    progress, buttons = get_readable_message()
+    with status_reply_dict_lock:
+        if msg.chat.id in list(status_reply_dict.keys()):
+            try:
+                message = status_reply_dict[msg.chat.id]
+                deleteMessage(bot, message)
+                del status_reply_dict[msg.chat.id]
+            except Exception as e:
+                LOGGER.error(str(e))
+                del status_reply_dict[msg.chat.id]
+        if buttons == "":
+            message = sendMessage(progress, bot, msg)
+        else:
+            message = sendMarkup(progress, bot, msg, buttons)
+        status_reply_dict[msg.chat.id] = message
+        
+def get_progress_bar_string(status):
+    completed = status.processed_bytes() / 8
+    total = status.size_raw() / 8
+    if total == 0:
+        p = 0
+    else:
+        p = round(completed * 100 / total)
+    p = min(max(p, 0), 100)
+    cFull = p // 8
+    cPart = p % 8 - 1
+    p_str = FINISHED_PROGRESS_STR * cFull
+    if cPart >= 0:
+        # p_str += PROGRESS_INCOMPLETE[cPart]
+        p_str += FINISHED_PROGRESS_STR
+    p_str += UNFINISHED_PROGRESS_STR * (PROGRESS_MAX_SIZE - cFull)
+    p_str = f"[{p_str}]"
+    return p_str
+
+def progress_bar(percentage):
+    """Returns a progress bar for download
+    """
+    #percentage is on the scale of 0-1
+    comp = FINISHED_PROGRESS_STR
+    ncomp = UNFINISHED_PROGRESS_STR
+    pr = ""
+
+    if isinstance(percentage, str):
+        return "NaN"
+    try:
+        percentage=int(percentage)
+    except:
+        percentage = 0
+
+    for i in range(1,11):
+        if i <= int(percentage/10):
+            pr += comp
+        else:
+            pr += ncomp
+    return pr
 
 def turn(data):
     try:
