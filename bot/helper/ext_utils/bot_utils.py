@@ -24,14 +24,14 @@ MAGNET_REGEX = r"magnet:\?xt=urn:btih:[a-zA-Z0-9]*"
 
 URL_REGEX = r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"
 
-"""
+
 COUNT = 0
 PAGE_NO = 1
 
 FINISHED_PROGRESS_STR = "▰"
 UNFINISHED_PROGRESS_STR = "▱"
 PROGRESS_MAX_SIZE = 100 // 8
-"""
+
 
 class MirrorStatus:
     STATUS_UPLOADING = "Uploading..."
