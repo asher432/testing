@@ -66,7 +66,7 @@ class AriaDownloadStatus:
             return MirrorStatus.STATUS_DOWNLOADING
         
     def eng(self):
-        return EnginerStatus.STATUS_ARIA
+        return EngineStatus.STATUS_ARIA
 
     def aria_download(self):
         return self.__download
