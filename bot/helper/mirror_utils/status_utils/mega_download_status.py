@@ -1,5 +1,5 @@
 from bot import DOWNLOAD_DIR
-from bot.helper.ext_utils.bot_utils import MirrorStatus, get_readable_file_size, get_readable_time
+from bot.helper.ext_utils.bot_utils import MirrorStatus, EngineStatus, get_readable_file_size, get_readable_time
 
 
 class MegaDownloadStatus:
@@ -25,6 +25,9 @@ class MegaDownloadStatus:
 
     def status(self):
         return MirrorStatus.STATUS_DOWNLOADING
+    
+    def eng(self):
+        return EngineStatus.STATUS_MEGA
 
     def name(self):
         return self.__obj.name
