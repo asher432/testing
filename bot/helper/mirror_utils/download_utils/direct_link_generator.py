@@ -8,8 +8,8 @@ from https://github.com/AvinashReddy3108/PaperplaneExtended . I hereby take no c
 than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtended/commits/master/userbot/modules/direct_links.py
 for original authorship. """
 
-import requests
-import re
+from requests import get as rget, head as rhead, post as rpost, Session as rsession
+from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search
 import os
 from time import sleep
 from base64 import b64decode
@@ -21,6 +21,7 @@ import cloudscraper
 from bs4 import BeautifulSoup
 from base64 import standard_b64encode
 from lxml import etree
+
 from bot import LOGGER, UPTOBOX_TOKEN,GDTOT_CRYPT, UNIFIED_EMAIL, UNIFIED_PASS, HUBDRIVE_CRYPT, KATDRIVE_CRYPT, DRIVEFIRE_CRYPT
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.ext_utils.bot_utils import *
