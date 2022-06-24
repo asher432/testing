@@ -463,7 +463,7 @@ def unified(url: str) -> str:
     account_login(client, url, account['email'], account['passwd'])
 
     res = client.get(url)
-    key = findall('"key",\s+"(.*?)"', res.text)[0]
+    key = re_findall('"key",\s+"(.*?)"', res.text)[0]
 
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
 
