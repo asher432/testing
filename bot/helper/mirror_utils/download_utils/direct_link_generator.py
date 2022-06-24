@@ -112,7 +112,7 @@ def zippy_share(url: str) -> str:
 #        b = int(b[0]) % int(b[1])
 #        z = int(str(js_script).split('var z = ')[1].split(';')[0])
 #        math_ = str(n + b + z - 3)
-        math = re.findall("\d+",js_content[1])
+        math = re_findall("\d+",js_content[1])
         math_ = int(math[0]) % int(math[1]) + int(math[2]) % int(math[3])
         return base_url + str(js_content[0]) + str(math_) + str(js_content[2])
     except IndexError:
@@ -185,7 +185,7 @@ def osdn(url: str) -> str:
 def github(url: str) -> str:
     """ GitHub direct links generator """
     try:
-        re.findall(r'\bhttps?://.*github\.com.*releases\S+', url)[0]
+        re_findall(r'\bhttps?://.*github\.com.*releases\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No GitHub Releases links found\n")
     download = requests.get(url, stream=True, allow_redirects=False)
@@ -212,7 +212,7 @@ def letsupload(url: str) -> str:
     """
     dl_url = ''
     try:
-        link = re.findall(r'\bhttps?://.*letsupload\.io\S+', url)[0]
+        link = re-findall(r'\bhttps?://.*letsupload\.io\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No Letsupload links found\n")
     return Bypass().bypass_url(link)
@@ -282,7 +282,7 @@ def racaty(url: str) -> str:
     based on https://github.com/SlamDevs/slam-mirrorbot"""
     dl_url = ''
     try:
-        link = re.findall(r'\bhttps?://.*racaty\.net\S+', url)[0]
+        link = re_findall(r'\bhttps?://.*racaty\.net\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No Racaty links found\n")
     scraper = create_scraper()
@@ -417,7 +417,7 @@ def gdtot(url: str) -> str:
         client.cookies.update({'crypt': GDTOT_CRYPT})
         res = client.get(url)
         res = client.get(f"https://{match[0]}.gdtot.{match[1]}/dld?id={url.split('/')[-1]}")
-    matches = re.findall('gd=(.*?)&', res.text)
+    matches = re_findall('gd=(.*?)&', res.text)
     try:
         decoded_id = b64decode(str(matches[0])).decode('utf-8')
     except:
@@ -527,7 +527,7 @@ def unified(url: str) -> str:
 def parse_info(res, url):
     info_parsed = {}
     if 'drivebuzz' in url:
-        info_chunks = findall('<td\salign="right">(.*?)<\/td>', res.text)
+        info_chunks = re_findall('<td\salign="right">(.*?)<\/td>', res.text)
     elif 'sharer.pw' in url:
         f = re_findall(">(.*?)<\/td>", res.text)
         info_parsed = {}
