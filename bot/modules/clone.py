@@ -14,7 +14,7 @@ from bot.helper.ext_utils.bot_utils import *
 from bot.helper.mirror_utils.download_utils.direct_link_generator import *
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from telegram import ParseMode, InlineKeyboardMarkup
-from bot.helper.telegram_helper.button-build import ButtonMaker
+from bot.helper.telegram_helper.button_build import ButtonMaker
 
 def _clone(message, bot, multi=0):
     buttons = ButtonMaker()
