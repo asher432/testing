@@ -240,7 +240,7 @@ class MirrorListener:
                             source_link = reply_text.strip()
                             if is_magnet(source_link):
                                 link = telegraph.create_page(
-                                    title='Helios-Mirror Source Link',
+                                    title='Ark Mirror Source Link',
                                     content=source_link,
                                 )["path"]
                                 buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
@@ -258,7 +258,7 @@ class MirrorListener:
             if typ != 0:
                 msg += f'\n<b>Corrupted Files: </b>{typ}'
             msg += f'\n\n<b>Hey </b>{self.tag} <b>Your Task is Complete.</b>\n'
-            msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}'
+            msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}\n'
             if not files:
                 sendMessage(msg, self.bot, self.message)
             else:
