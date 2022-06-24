@@ -85,7 +85,7 @@ def zippy_share(url: str) -> str:
     Based on https://github.com/KenHV/Mirror-Bot
              https://github.com/jovanzers/WinTenCermin
     try:
-        link = re.findall(r'\bhttps?://.*zippyshare\.com\S+', url)[0]
+        link = re_findall(r'\bhttps?://.*zippyshare\.com\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("ERROR: No Zippyshare links found")
     try:
@@ -104,7 +104,7 @@ def zippy_share(url: str) -> str:
                 js_script = js_script.find_all("script")[0]
             else:
                 raise DirectDownloadLinkException("ERROR: No Zippyshare links found")
-        js_content = re.findall(r'\.href.=."/(.*?)";', str(js_script))
+        js_content = re_findall(r'\.href.=."/(.*?)";', str(js_script))
         js_content = str(js_content[0]).split('"')
 #        n = str(js_script).split('var n = ')[1].split(';')[0].split('%')
 #        n = int(n[0]) % int(n[1])
@@ -147,7 +147,7 @@ def uptobox(url: str) -> str:
             link = re_findall(r'\bhttp?://.*uptobox\.com/dl\S+', url)[0]
             dl_url = link
         except:
-            file_id = re.findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
+            file_id = re_findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
             file_link = 'https://uptobox.com/api/link?token=%s&file_code=%s' % (UPTOBOX_TOKEN, file_id)
             req = requests.get(file_link)
             result = req.json()
@@ -168,14 +168,14 @@ def osdn(url: str) -> str:
     """ OSDN direct link generator """
     osdn_link = 'https://osdn.net'
     try:
-        link = re.findall(r'\bhttps?://.*osdn\.net\S+', url)[0]
+        link = re_findall(r'\bhttps?://.*osdn\.net\S+', url)[0]
     except IndexError:
         raise DirectDownloadLinkException("No OSDN links found\n")
     page = BeautifulSoup(
         requests.get(link, allow_redirects=True).content, 'lxml')
     info = page.find('a', {'class': 'mirror_link'})
     link = unquote(osdn_link + info['href'])
-    mirrors = page.find('form', {'id': 'mirror-select-form'}).findAll('tr')
+    mirrors = page.find('form', {'id': 'mirror-select-form'}).re_findAll('tr')
     urls = []
     for data in mirrors[1:]:
         mirror = data.find('input')['value']
@@ -411,7 +411,7 @@ def gdtot(url: str) -> str:
     if GDTOT_CRYPT is None:
         raise DirectDownloadLinkException("ERROR: CRYPT cookie not provided")
 
-    match = re.findall(r'https?://(.+)\.gdtot\.(.+)\/\S+\/\S+', url)[0]
+    match = re_findall(r'https?://(.+)\.gdtot\.(.+)\/\S+\/\S+', url)[0]
 
     with requests.Session() as client:
         client.cookies.update({'crypt': GDTOT_CRYPT})
@@ -445,7 +445,7 @@ def gen_payload(data, boundary=f'{"-"*6}_'):
     return data_string
 
 def parse_infou(data):
-    info = findall('>(.*?)<\/li>', data)
+    info = re_findall('>(.*?)<\/li>', data)
     info_parsed = {}
     for item in info:
         kv = [s.strip() for s in item.split(':', maxsplit = 1)]
@@ -529,7 +529,7 @@ def parse_info(res, url):
     if 'drivebuzz' in url:
         info_chunks = findall('<td\salign="right">(.*?)<\/td>', res.text)
     elif 'sharer.pw' in url:
-        f = findall(">(.*?)<\/td>", res.text)
+        f = re_findall(">(.*?)<\/td>", res.text)
         info_parsed = {}
         for i in range(0, len(f), 3):
             info_parsed[f[i].lower().replace(" ", "_")] = f[i + 2]
@@ -612,7 +612,7 @@ def sharer_pw(url, forced_login=False):
     })
     
     res = client.get(url)
-    token = findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
+    token = re_findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
     
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='btndirect']")
     
