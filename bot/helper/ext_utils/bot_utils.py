@@ -32,7 +32,6 @@ FINISHED_PROGRESS_STR = "▰"
 UNFINISHED_PROGRESS_STR = "▱"
 PROGRESS_MAX_SIZE = 100 // 8
 
-
 class MirrorStatus:
     STATUS_UPLOADING = "Uploading..."
     STATUS_DOWNLOADING = "Downloading..."
@@ -46,6 +45,17 @@ class MirrorStatus:
     STATUS_CHECKING = "CheckingUp..."
     STATUS_SEEDING = "Seeding..."
 
+class EngineStatus:
+    STATUS_ARIA = "Aria2c"
+    STATUS_GDRIVE = "Google API"
+    STATUS_MEGA = "Mega API"
+    STATUS_QB = "qBittorrent"
+    STATUS_TG = "Pyrogram - Uploading on TG"
+    STATUS_YT = "Yt-dlp"
+    STATUS_EXT = "extract | pextract"
+    STATUS_SPLIT = "FFmpeg"
+    STATUS_ZIP = "7z"
+    
 SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
 
@@ -283,16 +293,15 @@ def get_readable_message():
                 msg += f"\n<b>sᴘᴇᴇᴅ :</b> {download.speed()} | <b>ETA:</b> {download.eta()}"
                 msg += f"\n<b>ᴇʟᴀᴘsᴇᴅ : </b>{get_readable_time(time.time() - download.message.date.timestamp())}"
                 msg += f'\n<b>sᴏᴜʀᴄᴇ :</b> <a href="https://t.me/c/{str(download.message.chat.id)[4:]}/{download.message.message_id}">{download.message.from_user.first_name}</a>'
+                msg += f"\n<b>ᴇɴɢɪɴᴇ : </b> {download.eng()}"
                 try:
                     msg += f"\n<b>sᴇᴇᴅᴇʀs :</b> {download.aria_download().num_seeders}" \
                            f" | <b>ᴘᴇᴇʀs :</b> {download.aria_download().connections}"
-                    msg += f"\n<b>ᴇɴɢɪɴᴇ : Aria2c</b>"
                 except:
                     pass
                 try:
                     msg += f"\n<b>sᴇᴇᴅᴇʀs :</b> {download.torrent_info().num_seeds}" \
                            f" | <b>ʟᴇᴇᴄʜᴇʀs :</b> {download.torrent_info().num_leechs}"
-                    msg += f"\n<b>ᴇɴɢɪɴᴇ : qBittorrent</b>"
                 except:
                     pass
                 try:
@@ -304,7 +313,7 @@ def get_readable_message():
                 msg += f"\n<b>To Cancel : </b><code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             elif download.status() == MirrorStatus.STATUS_SEEDING:
                 msg += f"\n<b>Size : </b>{download.size()}"
-                msg += f"\n<b>ᴇɴɢɪɴᴇ :</b> <code>qBittorrent</code>"
+                msg += f"\n<b>ᴇɴɢɪɴᴇ :</b> {download.eng()}"
                 msg += f"\n<b>sᴘᴇᴇᴅ : </b>{get_readable_file_size(download.torrent_info().upspeed)}/s"
                 msg += f" | <b>ᴜᴘʟᴏᴀᴅᴇᴅ : </b>{get_readable_file_size(download.torrent_info().uploaded)}"
                 msg += f"\n<b>Ratio : </b>{round(download.torrent_info().ratio, 3)}"
