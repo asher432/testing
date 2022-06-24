@@ -260,12 +260,12 @@ class MirrorListener:
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
-                        uploadmsg = sendMarkup(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
+                        sendMessage(msg + fmsg, self.bot, self.message)
                         sleep(1)
                         fmsg = ''
                 if fmsg != '':
                     sendMessage(msg + fmsg, self.bot, self.message)
-                    Thread(target=auto_delete_upload_message, args=(self.bot, self.message)).start()
+                    "Thread(target=auto_delete_upload_message, args=(self.bot, self.message)).start()"
         else:
             msg += f'\n\n<b>Type: </b>{typ}'
             if ospath.isdir(f'{DOWNLOAD_DIR}{self.uid}/{name}'):
