@@ -265,10 +265,9 @@ class MirrorListener:
                         fmsg = ''
                 if fmsg != '':
                     logstart = f"http://t.me/+pD5dv1xG2hNhYjll"
-                    buttons.buildbutton("View file in PM", f"{botstart}")
                     buttons.buildbutton("Leech Dump", f"{logstart}")               
                     uploadmsg = sendMarkup(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
-                    Thread(target=auto_delete_upload_message, args=(self.bot, self.message)).start()
+                    Thread(target=auto_delete_upload_message, args=(self.bot, self.message, uploadmsg)).start()
         else:
             msg += f'\n\n<b>Type: </b>{typ}'
             if ospath.isdir(f'{DOWNLOAD_DIR}{self.uid}/{name}'):
