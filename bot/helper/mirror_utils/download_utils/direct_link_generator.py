@@ -413,7 +413,7 @@ def gdtot(url: str) -> str:
 
     match = re_findall(r'https?://(.+)\.gdtot\.(.+)\/\S+\/\S+', url)[0]
 
-    with requests.Session() as client:
+    with rsession() as client:
         client.cookies.update({'crypt': GDTOT_CRYPT})
         res = client.get(url)
         res = client.get(f"https://{match[0]}.gdtot.{match[1]}/dld?id={url.split('/')[-1]}")
