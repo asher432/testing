@@ -13,9 +13,15 @@ from bot import bot,dispatcher,LOGGER,CLONE_LIMIT,STOP_DUPLICATE,download_dict,d
 from bot.helper.ext_utils.bot_utils import *
 from bot.helper.mirror_utils.download_utils.direct_link_generator import *
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
-from telegram import ParseMode
+from telegram import ParseMode, InlineKeyboardMarkup
+from bot.helper.telegram_helper.button-build import ButtonMaker
 
 def _clone(message, bot, multi=0):
+    buttons = ButtonMaker()
+    if AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
+        reply_to = message.reply_to_message
+        if reply_to is not None:
+            reply_to.delete()
     if BOT_PM:
         try:
             msg1 = f'Added your Requested link to Download\n'
