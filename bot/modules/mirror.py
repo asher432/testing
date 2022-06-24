@@ -252,11 +252,11 @@ class MirrorListener:
             if typ != 0:
                 msg += f'\n<b>Corrupted Files: </b>{typ}'
             msg += f'\n\n<b>Hey </b>{self.tag} <b>Your Task is Complete.</b>\n'
-            msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}\n'
+            msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}'
             if not files:
                 sendMessage(msg, self.bot, self.message)
             else:
-                fmsg = ''
+                fmsg = '\n'
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
