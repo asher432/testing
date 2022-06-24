@@ -266,7 +266,7 @@ class MirrorListener:
                 if fmsg != '':
                     logstart = f"http://t.me/+pD5dv1xG2hNhYjll"
                     buttons.sbutton("View file in PM", f"{botstart}")
-                    buttons.sbutton("Leech Dump", f"{logstart})
+                    buttons.sbutton("Leech Dump", f"{logstart}")
                     sbuttons = InlineKeyboardMarkup(buttons.build_menu(2))                
                     sendMessage(msg + fmsg, self.bot, self.message, sbuttons)
                     "Thread(target=auto_delete_upload_message, args=(self.bot, self.message)).start()"
