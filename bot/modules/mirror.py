@@ -219,7 +219,7 @@ class MirrorListener:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
         if self.isLeech:
-            """if SOURCE_LINK is True:
+            if SOURCE_LINK is True:
                 try:
                     source_link = message_args[1]
                     if is_magnet(source_link):
@@ -242,7 +242,7 @@ class MirrorListener:
                                 buttons.buildbutton(f"🔗 Source Link", source_link)
                     except Exception as e:
                         LOGGER.warning(e)
-                        pass"""
+                        pass
             if BOT_PM:
                 bot_d = bot.get_me()
                 b_uname = bot_d.username
@@ -254,7 +254,7 @@ class MirrorListener:
             msg += f'\n\n<b>Hey </b>{self.tag} <b>Your Task is Complete.</b>\n'
             msg += f'\n<b>Time Elapsed :</b> {get_readable_time(time() - self.message.date.timestamp())}\n'
             if not files:
-                sendMessage(msg, self.bot, self.message)
+                uploadmsg = sendMessage(msg, self.bot, self.message)
             else:
                 fmsg = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
