@@ -204,6 +204,18 @@ class MirrorListener:
             DbManger().rm_complete_task(self.message.link)
 
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
+        buttons = ButtonMaker()
+        # this is inspired by def mirror to get the link from message
+        mesg = self.message.text.split('\n')
+        message_args = mesg[0].split(' ', maxsplit=1)
+        reply_to = self.message.reply_to_message
+        if self.message.chat.type != 'private' and AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
+            if reply_to is not None:
+                try:
+                    reply_to.delete()
+                except Exception as error:
+                    LOGGER.warning(error)
+                    pass
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
@@ -287,7 +299,6 @@ class MirrorListener:
                 buttons.buildbutton(f"{BUTTON_FIVE_NAME}", f"{BUTTON_FIVE_URL}")
             if BUTTON_SIX_NAME is not None and BUTTON_SIX_URL is not None:
                 buttons.buildbutton(f"{BUTTON_SIX_NAME}", f"{BUTTON_SIX_URL}")
-            sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
             if SOURCE_LINK is True:
                 try:
                     source_link = message_args[1]
