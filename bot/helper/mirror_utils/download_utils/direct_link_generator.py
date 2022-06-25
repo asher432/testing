@@ -594,7 +594,7 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        gd_id = re_findall('gd=(.*)', res.text, re.DOTALL)[0]
+        gd_id = re_findall('gd=(.*)', res)
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
@@ -612,7 +612,7 @@ def sharer_pw(url, forced_login=False):
     
     res = client.get(url)
     soup = BeautifulSoup(res.text, "lxml")
-    token = re_findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
+    token = re_findall("token\s=\s'(.*?)'", res, re.DOTALL)[0]
     
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='btndirect']")
     
