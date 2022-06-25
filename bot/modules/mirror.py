@@ -220,7 +220,7 @@ class MirrorListener:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
         if self.isLeech:
-            if SOURCE_LINK is True:
+            """if SOURCE_LINK is True:
                 try:
                     source_link = message_args[1]
                     if is_magnet(source_link):
@@ -243,7 +243,7 @@ class MirrorListener:
                                 buttons.buildbutton(f"🔗 Source Link", source_link)
                     except Exception as e:
                         LOGGER.warning(e)
-                        pass
+                        pass"""
             if BOT_PM:
                 bot_d = bot.get_me()
                 b_uname = bot_d.username
