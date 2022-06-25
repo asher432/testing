@@ -592,7 +592,7 @@ def udrive(url: str) -> str:
         gd_id = res.rsplit("=", 1)[-1]
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
-   else:
+    else:
         gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
