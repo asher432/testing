@@ -304,11 +304,7 @@ def get_readable_message():
                            f" | <b>ʟᴇᴇᴄʜᴇʀs :</b> {download.torrent_info().num_leechs}"
                 except:
                     pass
-                try:
-                    if download.status() == MirrorStatus.STATUS_UPLOADING:
-                        msg += f"\n<b>ᴇɴɢɪɴᴇ : Google Api</b>"
-                except BaseException:
-                    pass
+                
                 msg += f'\n<b>Requested User : </b> ️<code>{download.message.from_user.first_name}</code>️(<code>{download.message.from_user.id}</code>)'
                 msg += f"\n<b>To Cancel : </b><code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             elif download.status() == MirrorStatus.STATUS_SEEDING:
