@@ -204,17 +204,6 @@ class MirrorListener:
             DbManger().rm_complete_task(self.message.link)
 
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
-        buttons = ButtonMaker()
-        mesg = self.message.text.split('\n')
-        message_args = mesg[0].split(' ', maxsplit=1)
-        reply_to = self.message.reply_to_message
-        if self.message.chat.type != 'private' and AUTO_DELETE_UPLOAD_MESSAGE_DURATION != -1:
-            if reply_to is not None:
-                try:
-                    reply_to.delete()
-                except Exception as error:
-                    LOGGER.warning(error)
-                    pass
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
@@ -303,10 +292,7 @@ class MirrorListener:
                 try:
                     source_link = message_args[1]
                     if is_magnet(source_link):
-                        link = telegraph.create_page(
-                            title='Ark Mirror Source Link',
-                            content=source_link,
-                        )["path"]
+                        link = telegraph.create_page(title='Ark Mirror Source Link',content=source_link,)["path"]
                         buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
                     else:
                         buttons.buildbutton(f"🔗 Source Link", source_link)
@@ -319,32 +305,24 @@ class MirrorListener:
                     if is_url(reply_text):
                         source_link = reply_text.strip()
                         if is_magnet(source_link):
-                            link = telegraph.create_page(
-                                title='Ark Mirror Source Link',
-                                content=source_link,
-                            )["path"]
+                            link = telegraph.create_page(title='Ark Mirror Source Link',content=source_link,)["path"]
                             buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
                         else:
                             buttons.buildbutton(f"🔗 Source Link", source_link)
                 except Exception as e:
                     LOGGER.warning(e)
                     pass
-            else:
             uploadmsg = sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
             Thread(target=auto_delete_upload_message, args=(bot, self.message, uploadmsg)).start()
             if MIRROR_LOGS:
                 try:
                     for chatid in MIRROR_LOGS:
-                        bot.sendMessage(chat_id=chatid, text=msg,
-                                        reply_markup=InlineKeyboardMarkup(buttons.build_menu(2)),
-                                        parse_mode=ParseMode.HTML)
+                        bot.sendMessage(chat_id=chatid, text=msg,reply_markup=InlineKeyboardMarkup(buttons.build_menu(2)),parse_mode=ParseMode.HTML)
                 except Exception as e:
                     LOGGER.warning(e)
             if BOT_PM and self.message.chat.type != 'private':
                 try:
-                    bot.sendMessage(chat_id=self.user_id, text=msg,
-                                    reply_markup=InlineKeyboardMarkup(buttons.build_menu(2)),
-                                    parse_mode=ParseMode.HTML)
+                    bot.sendMessage(chat_id=self.user_id, text=msg,reply_markup=InlineKeyboardMarkup(buttons.build_menu(2)),parse_mode=ParseMode.HTML)
                 except Exception as e:
                     LOGGER.warning(e)
                     return
