@@ -449,13 +449,13 @@ def bot_sys_stats():
     recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
     stats = f"""
-<b>CPU :</b> {progress_bar(cpu)} {cpu}%
-<b>RAM :</b> {progress_bar(mem)} {mem}%
-<b>DISK :</b> {progress_bar(disk)} {disk}%
+CPU : {progress_bar(cpu)} {cpu}%
+RAM : {progress_bar(mem)} {mem}%
+DISK : {progress_bar(disk)} {disk}%
 
-<b>SENT :</b> {sent} || <b>RECV :</b> {recv}
+SENT : {sent} || RECV : {recv}
 
-<b>Team Ark Mirror ;)</b>
+Team Ark Mirror ;)
 """
     return stats
 
