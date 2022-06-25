@@ -28,8 +28,5 @@ class ZipStatus:
     def status(self):
         return MirrorStatus.STATUS_ARCHIVING
     
-    def eng(self):
-        return EngineStatus.STATUS_ZIP
-
     def processed_bytes(self):
         return 0
