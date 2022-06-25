@@ -329,6 +329,7 @@ class MirrorListener:
                 except Exception as e:
                     LOGGER.warning(e)
                     pass
+            else:
             uploadmsg = sendMarkup(msg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
             Thread(target=auto_delete_upload_message, args=(bot, self.message, uploadmsg)).start()
             if MIRROR_LOGS:
