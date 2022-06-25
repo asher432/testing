@@ -534,8 +534,8 @@ def parse_info(res, url):
         f = re_findall(">(.*?)<\/td>", res.text)
         info_parsed = {}
         for i in range(0, len(f), 3):
-            info_parsed[f[i].lower().replace(" ", "_")] = f[i + 2]
-        return info_parsed
+          info_parsed[f[i].lower().replace(' ', '_')] = f[i+2]
+          return info_parsed
     else:
         info_chunks = re_findall('>(.*?)<\/td>', res.text)
     for i in range(0, len(info_chunks), 2):
@@ -544,7 +544,7 @@ def parse_info(res, url):
   
 def udrive(url: str) -> str:
     if 'katdrive' in url:
-      client = requests.Session()
+      client = rsession()
     else:
       client = cloudscraper.create_scraper(delay=10, browser='chrome')
     
@@ -580,7 +580,7 @@ def udrive(url: str) -> str:
     try:
         res = client.post(req_url, headers=headers, data=data).json()['file']
     except: 
-        raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
+      return {'error': True, 'src_url': url}        
     
     if 'drivefire' in url:
         decoded_id = res.rsplit('/', 1)[-1]
@@ -600,6 +600,7 @@ def udrive(url: str) -> str:
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
     flink = info_parsed['gdrive_url']
+    
     return flink  
 
 def sharer_pw(url, forced_login=False):
