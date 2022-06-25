@@ -9,7 +9,7 @@ than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtend
 for original authorship. """
 
 from requests import get as rget, head as rhead, post as rpost, Session as rsession
-from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search, DOTALL as re.DOTALL
+from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search, DOTALL as re_DOTALL
 import os
 from time import sleep
 from base64 import b64decode
@@ -593,7 +593,7 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+        gd_id = re_findall('gd=(.*)', res, re_DOTALL)[0]
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
@@ -609,7 +609,7 @@ def sharer_pw(url, forced_login=False):
     })
     
     res = client.get(url)
-    token = re_findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
+    token = re_findall("token\s=\s'(.*?)'", res.text, re_DOTALL)[0]
     
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='btndirect']")
     
