@@ -608,10 +608,7 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        try:
-            gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
-        except IndexError:
-            raise DirectDownloadLinkException(f'Cannot Process Your Link, {link}')
+        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
