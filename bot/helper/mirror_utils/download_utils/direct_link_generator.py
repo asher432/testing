@@ -469,7 +469,7 @@ def parse_infou(data):
 def unified(url: str) -> str:
     if (UNIFIED_EMAIL or UNIFIED_PASS) is None:
         raise DirectDownloadLinkException("UNIFIED_EMAIL and UNIFIED_PASS env vars not provided")
-    client = cloudscraper.create_scraper(delay=10, browser='chrome')
+    client = rsession()
     client.headers.update({
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
     })
