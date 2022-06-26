@@ -477,7 +477,10 @@ def unified(url: str) -> str:
     account_login(client, url, account['email'], account['passwd'])
 
     res = client.get(url)
-    key = re_findall('"key",\s+"(.*?)"', res.text)[0]
+    try:
+        key = re_findall('"key",\s+"(.*?)"', res.text)[0]
+    except IndexError:
+        return DirectDownloadLinkException("ERROR: File not found/Download limit reached\n")
 
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
 
@@ -605,7 +608,10 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+        try:
+            gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+        except IndexError:
+            raise DirectDownloadLinkException(f'Cannot Process Your Link, {link}')
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
