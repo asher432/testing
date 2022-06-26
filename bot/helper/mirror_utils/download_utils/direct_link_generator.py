@@ -477,10 +477,7 @@ def unified(url: str) -> str:
     account_login(client, url, account['email'], account['passwd'])
 
     res = client.get(url)
-    try:
-        key = re_findall('"key",\s+"(.*?)"', res.text)[0]
-    except IndexError:
-        return DirectDownloadLinkException("ERROR: File not found/Download limit reached\n")
+    key = re_findall('"key",\s+"(.*?)"', res.text)[0]
 
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
 
