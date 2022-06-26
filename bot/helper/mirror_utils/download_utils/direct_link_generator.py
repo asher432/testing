@@ -469,7 +469,7 @@ def parse_infou(data):
 def unified(url: str) -> str:
     if (UNIFIED_EMAIL or UNIFIED_PASS) is None:
         raise DirectDownloadLinkException("UNIFIED_EMAIL and UNIFIED_PASS env vars not provided")
-    client = cloudscraper.create_scraper(delay=10, browser='chrome')
+    client = rsession()
     client.headers.update({
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36"
     })
@@ -555,10 +555,10 @@ def parse_info(res, url):
     return info_parsed
   
 def udrive(url: str) -> str:
-    if 'katdrive' in url:
-      client = rsession()
-    else:
-      client = cloudscraper.create_scraper(delay=10, browser='chrome')
+   # if 'katdrive' or 'kolop' in url:
+    client = rsession()
+    #else:
+   #    client = cloudscraper.create_scraper(delay=10, browser='chrome')
     
     if 'hubdrive' in url:
         client.cookies.update({'crypt': HUBDRIVE_CRYPT})
@@ -575,7 +575,6 @@ def udrive(url: str) -> str:
         
     res = client.get(url)
     info_parsed = parse_info(res, url)
-
     info_parsed['error'] = False
     
     up = urlparse(url)
@@ -610,8 +609,8 @@ def udrive(url: str) -> str:
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
-    flink = info_parsed['gdrive_url']
     
+    flink = info_parsed['gdrive_url']
     return flink  
 
 def sharer_pw(url, forced_login=False):
