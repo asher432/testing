@@ -63,7 +63,7 @@ def _clone(message, bot, multi=0):
     is_sharer = is_sharer_link(link)
     if (is_gdtot or is_unified or is_udrive or is_sharer):
         try:
-            msg = sendMessage(f"<b>Processing:</b> <code>{link}</code>", bot, message)
+            msg = sendMessage(f"<b>Added Your Link for Cloning, link to be processed in 10 seconds</b>\n\n <code>{link}</code>", bot, message)
             LOGGER.info(f"Processing: {link}")
             if is_unified:
                 link = unified(link)
