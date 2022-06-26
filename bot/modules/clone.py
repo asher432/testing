@@ -74,8 +74,9 @@ def _clone(message, bot, multi=0):
             if is_sharer:
                 link = sharer_pw(link)
             deleteMessage(bot, msg)
-        except IndexError:
-            pass
+        except DirectDownloadLinkException as e:
+            deleteMessage(bot, msg)
+            return sendMessage(str(e), bot, message)
     if is_gdrive_link(link):
         gd = GoogleDriveHelper()
         res, size, name, files = gd.helper(link)
