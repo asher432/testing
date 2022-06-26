@@ -477,8 +477,10 @@ def unified(url: str) -> str:
     account_login(client, url, account['email'], account['passwd'])
 
     res = client.get(url)
-    key = re_findall('"key",\s+"(.*?)"', res.text)[0]
-
+    try:
+        key = re_findall('"key",\s+"(.*?)"', res.text)[0]
+    except IndexError:
+      return "Cannot Process this link.\n"
     ddl_btn = etree.HTML(res.content).xpath("//button[@id='drc']")
 
     info_parsed = parse_infou(res.text)
