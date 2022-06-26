@@ -366,6 +366,18 @@ def solidfiles(url: str) -> str:
     pageSource = requests.get(url, headers = headers).text
     mainOptions = str(re.search(r'viewerOptions\'\,\ (.*?)\)\;', pageSource).group(1))
     return jsnloads(mainOptions)["downloadUrl"]
+  
+def useragent():
+    """
+    useragent random setter
+    """
+    useragents = BeautifulSoup(
+        requests.get(
+            'https://developers.whatismybrowser.com/'
+            'useragents/explore/operating_system_name/android/').content,
+        'lxml').findAll('td', {'class': 'useragent'})
+    user_agent = choice(useragents)
+    return user_agent.text
 
 def krakenfiles(page_link: str) -> str:
     """ krakenfiles direct link generator
