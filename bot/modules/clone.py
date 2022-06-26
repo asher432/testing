@@ -86,7 +86,7 @@ def _clone(message, bot, multi=0):
             LOGGER.info("Checking File/Folder if already in Drive...")
             smsg, button = gd.drive_list(name, True, True)
             if smsg:
-                msg3 = sendMessage(f"<b>{tag}, Your File/Folder is already available in our Drive.</b>\n Your Link will not be cloned.\n\n Name:{name}")
+                msg3 = sendMessage(f"<b>{tag}, Your File/Folder is already available in our Drive.</b>\n Your Link will not be cloned.\n\n Name:<code>{name}</code>", bot, message)
                 return sendMarkup(msg3, bot, message, button)
         if CLONE_LIMIT is not None:
             LOGGER.info("Checking File/Folder Size...")
