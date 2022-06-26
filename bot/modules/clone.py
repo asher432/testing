@@ -124,7 +124,7 @@ def _clone(message, bot, multi=0):
                 else:
                     update_all_messages()
             except IndexError:
-                raise DirectDownloadLinkException("This link cannot be Processed.\nCheck if the Link is valid\n")
+                pass
         cc = f"\n\n<b>#Cloned cc: </b>{tag}"
         if button in ["cancelled", ""]:
             sendMessage(f"{tag} {result}", bot, message)
