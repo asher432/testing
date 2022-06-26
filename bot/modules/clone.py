@@ -63,7 +63,7 @@ def _clone(message, bot, multi=0):
     is_sharer = is_sharer_link(link)
     if (is_gdtot or is_unified or is_udrive or is_sharer):
         try:
-            msg = sendMessage(f"<b>Added Your Link for Cloning, link to be processed in 10 seconds</b>\n\n <code>{link}</code>", bot, message)
+            msg = sendMessage(f"<b>{tag}, Your Link has been added for Cloning</b>\n\n <code>{link}</code>", bot, message)
             LOGGER.info(f"Processing: {link}")
             if is_unified:
                 link = unified(link)
@@ -86,7 +86,7 @@ def _clone(message, bot, multi=0):
             LOGGER.info("Checking File/Folder if already in Drive...")
             smsg, button = gd.drive_list(name, True, True)
             if smsg:
-                msg3 = "File/Folder is already available in Drive.\nHere are the search results:"
+                msg3 = sendMessage(f"<b>{tag}, Your File/Folder is already available in our Drive.</b>\n Your Link will not be cloned.\n\n Name:{name}")
                 return sendMarkup(msg3, bot, message, button)
         if CLONE_LIMIT is not None:
             LOGGER.info("Checking File/Folder Size...")
