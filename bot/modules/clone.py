@@ -12,7 +12,7 @@ from bot.helper.mirror_utils.status_utils.clone_status import CloneStatus
 from bot import bot,dispatcher,LOGGER,CLONE_LIMIT,STOP_DUPLICATE,download_dict,download_dict_lock,Interval, BOT_PM, MIRROR_LOGS
 from bot.helper.ext_utils.bot_utils import *
 from bot.helper.mirror_utils.download_utils.direct_link_generator import *
-from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
+from bot.helper.ext_utils.exceptions import *
 from telegram import ParseMode, InlineKeyboardMarkup
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
@@ -123,7 +123,7 @@ def _clone(message, bot, multi=0):
                 else:
                     update_all_messages()
             except IndexError:
-                pass
+                raise DirectDownloadLinkException("This link cannot be Processed.\nCheck if the Link is valid\n")
         cc = f"\n\n<b>#Cloned cc: </b>{tag}"
         if button in ["cancelled", ""]:
             sendMessage(f"{tag} {result}", bot, message)
@@ -145,7 +145,7 @@ def _clone(message, bot, multi=0):
                 LOGGER.warning(e)
                 return
     else:
-        sendMessage("Send Gdrive, GDToT or similar drive sharer Link along with command or by replying to the link by command", bot, message)
+        sendMessage("This Link Cannot be cloned, Use /help to get bot commands", bot, message)
 
 @new_thread
 def cloneNode(update, context):
