@@ -605,7 +605,10 @@ def udrive(url: str) -> str:
         flink = f"https://drive.google.com/open?id={gd_id}"
         return flink
     else:
-        gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+        try:
+            gd_id = re_findall('gd=(.*)', res, re.DOTALL)[0]
+        except:
+            raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
         
     info_parsed['gdrive_url'] = f"https://drive.google.com/open?id={gd_id}"
     info_parsed['src_url'] = url
