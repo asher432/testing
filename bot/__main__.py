@@ -78,7 +78,7 @@ def call_back_data(update, context):
     main.delete()
     main = None   
     
-def start(message, update, context) -> None:
+def start(update, context) -> None:
     buttons = ButtonMaker()
     uname = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>'
     buttons.buildbutton("Join Our Channel", "https://t.me/arkmirror")
@@ -91,7 +91,7 @@ Type /{BotCommands.HelpCommand} to get a list of available commands
 '''
         sendMarkup(start_string, context.bot, update.message, reply_markup)
     else:
-        sendMarkup(f'Hey {uname}, Thank you for starting me in PM.\n\nYou will get all your files in PM from now.\n\nBut you are authorised only in our channel.\n\nJoin our channel to use me', context.bot, update.message, reply_markup)
+        sendMarkup(f'Hey, Thank you for starting me in PM.\n\nYou will get all your files in PM from now.\n\nBut you are authorised only in our channel.\n\nJoin our channel to use me', context.bot, update.message, reply_markup)
 
 def restart(update, context):
     restart_message = sendMessage("Restarting...", context.bot, update.message)
