@@ -80,7 +80,6 @@ def call_back_data(update, context):
     
 def start(update, context) -> None:
     buttons = ButtonMaker()
-    uname = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>'
     buttons.buildbutton("Join Our Channel", "https://t.me/arkmirror")
     buttons.buildbutton("O W N E R", "https://t.me/include_i0stream")
     reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
