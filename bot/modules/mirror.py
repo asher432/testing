@@ -304,13 +304,15 @@ class MirrorListener:
                     mesg = message_args[1]
                     if is_magnet(mesg):
                         link = telegraph.create_page(title='Ark Mirror Source Link',content=mesg,)["path"]
-                        buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                        buttons.buildbutton(f"Source Link", f"https://telegra.ph/{link}")
                     elif is_url(mesg):
                         source_link = mesg
                         if source_link.startswith(("|", "pswd: ")):
                             pass
                         else: 
-                            buttons.buildbutton(f"🔗 Source Link", source_link)
+                            buttons.buildbutton(f"Source Link", source_link)
+                    else:
+                        pass
                 except Exception as e:
                     LOGGER.warning(e)
                     pass
@@ -321,9 +323,9 @@ class MirrorListener:
                         source_link = reply_text.strip()
                         if is_magnet(source_link):
                             link = telegraph.create_page(title='Ark Mirror Source Link',content=source_link,)["path"]
-                            buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                            buttons.buildbutton(f"Source Link", f"https://telegra.ph/{link}")
                         else:
-                            buttons.buildbutton(f"🔗 Source Link", source_link)
+                            buttons.buildbutton(f"Source Link", source_link)
                 except Exception as e:
                     LOGGER.warning(e)
                     pass
