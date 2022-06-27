@@ -204,6 +204,8 @@ class MirrorListener:
             DbManger().rm_complete_task(self.message.link)
 
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
+        uname = f'<a href="tg://user?id={self.message.from_user.id}">{self.message.from_user.first_name}</a>'
+        chat_id = str(LEECH_LOG)[5:][:-1]
         buttons = ButtonMaker()
         # this is inspired by def mirror to get the link from message
         mesg = self.message.text.split('\n')
@@ -216,34 +218,17 @@ class MirrorListener:
                 except Exception as error:
                     LOGGER.warning(error)
                     pass
+            auto_delete_message = int(AUTO_DELETE_UPLOAD_MESSAGE_DURATION / 60)
+            if self.message.chat.type == 'private':
+                msg = ''
+            else:
+                msg = f'\n<b>This message will be deleted in <i>{auto_delete_message} minutes</i> from this group.</b>\n\m'
+        else:
+            msg = ''
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
         if self.isLeech:
-            """if SOURCE_LINK is True:
-                try:
-                    source_link = message_args[1]
-                    if is_magnet(source_link):
-                        link = telegraph.create_page(title='Ark Mirror Source Link',content=source_link,)["path"]
-                        buttons.buildbutton(f"Source Link", f"https://telegra.ph/{link}")
-                    else:
-                        buttons.buildbutton(f"Source Link", source_link)
-                except Exception as e:
-                    LOGGER.warning(e)
-                pass
-                if reply_to is not None:
-                    try:
-                        reply_text = reply_to.text
-                        if is_url(reply_text):
-                            source_link = reply_text.strip()
-                            if is_magnet(source_link):
-                                link = telegraph.create_page(title='Ark Mirror Source Link',content=source_link,)["path"]
-                                buttons.buildbutton(f"Source Link", f"https://telegra.ph/{link}")
-                            else:
-                                buttons.buildbutton(f"Source Link", source_link)
-                    except Exception as e:
-                        LOGGER.warning(e)
-                        pass"""
             if BOT_PM:
                 bot_d = bot.get_me()
                 b_uname = bot_d.username
@@ -260,9 +245,9 @@ class MirrorListener:
                 fmsg = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
-                    if len(fmsg.encode() + msg.encode()) > 4000:
+                    if len(fmsg.encode('utf-8') + msg.encode('utf-8')) > 4000:
                         uploadmsg = sendMessage(msg + fmsg, self.bot, self.message, InlineKeyboardMarkup(buttons.build_menu(2)))
-                        sleep(1)
+                        sleep(1.5)
                         fmsg = ''
                 if fmsg != '':
                     logstart = f"http://t.me/+pD5dv1xG2hNhYjll"
@@ -359,11 +344,14 @@ class MirrorListener:
             except Exception as e:
                 LOGGER.error(str(e))
             count = len(download_dict)
+        msg = sendMarkup(msg + uploader + pmwarn_mirror + warnmsg, self.bot, self.update, InlineKeyboardMarkup(buttons.build_menu(2)))
         if count == 0:
             self.clean()
         else:
             update_all_messages()
+        Thread(target=auto_delete_upload_message, args=(bot, self.message, msg)).start()
 
+            
     def onUploadError(self, error):
         reply_to = self.message.reply_to_message
         if reply_to is not None:
@@ -402,7 +390,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
         except Exception as err:
             LOGGER.error(f"Uff We got Some Error:\n{err}")
             pass
-    if BOT_PM and message.chat.type != 'private':
+    if BOT_PM:
         try:
             msg1 = f'Added your Requested link to Download\n'
             send = bot.sendMessage(message.from_user.id, text=msg1)
@@ -487,19 +475,22 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
                 return
             else:
                 link = file.get_file().file_path
+                
+    if len(mesg) > 1:
+        try:
+            ussr = quote(mesg[1], safe='')
+            pssw = quote(mesg[2], safe='')
+            link = link.split("://", maxsplit=1)
+            link = f'{link[0]}://{ussr}:{pssw}@{link[1]}'
+        except IndexError:
+            pass 
 
     if not is_url(link) and not is_magnet(link) and not ospath.exists(link):
-        help_msg = "<b>Send link along with command line:</b>"
-        help_msg += "\n<code>/command</code> {link} |newname pswd: xx [zip/unzip]"
-        help_msg += "\n\n<b>By replying to link or file:</b>"
-        help_msg += "\n<code>/command</code> |newname pswd: xx [zip/unzip]"
-        help_msg += "\n\n<b>Direct link authorization:</b>"
-        help_msg += "\n<code>/command</code> {link} |newname pswd: xx\nusername\npassword"
-        help_msg += "\n\n<b>Qbittorrent selection:</b>"
-        help_msg += "\n<code>/qbcommand</code> <b>s</b> {link} or by replying to {file/link}"
+        help_msg = "Send link along with command line"
+        help_msg += "\nor reply to link or file"
         help_msg += "\n\n<b>Multi links only by replying to first link or file:</b>"
         help_msg += "\n<code>/command</code> 10(number of links/files)"
-        return sendMessage(help_msg, bot, message)
+        Thread(target=auto_delete_message, args=(bot, update.message, msg)).start()
 
     LOGGER.info(link)
 
