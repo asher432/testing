@@ -78,7 +78,7 @@ def call_back_data(update, context):
     main.delete()
     main = None   
     
-def start(update, context) -> None:
+def start(message, update, context) -> None:
     buttons = ButtonMaker()
     uname = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>'
     buttons.buildbutton("Join Our Channel", "https://t.me/arkmirror")
