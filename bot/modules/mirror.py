@@ -204,8 +204,6 @@ class MirrorListener:
             DbManger().rm_complete_task(self.message.link)
 
     def onUploadComplete(self, link: str, size, files, folders, typ, name: str):
-        uname = f'<a href="tg://user?id={self.message.from_user.id}">{self.message.from_user.first_name}</a>'
-        chat_id = str(LEECH_LOG)[5:][:-1]
         buttons = ButtonMaker()
         # this is inspired by def mirror to get the link from message
         mesg = self.message.text.split('\n')
@@ -218,17 +216,40 @@ class MirrorListener:
                 except Exception as error:
                     LOGGER.warning(error)
                     pass
-            auto_delete_message = int(AUTO_DELETE_UPLOAD_MESSAGE_DURATION / 60)
-            if self.message.chat.type == 'private':
-                msg = ''
-            else:
-                msg = f'\n<b>This message will be deleted in <i>{auto_delete_message} minutes</i> from this group.</b>\n\m'
-        else:
-            msg = ''
         if not self.isPrivate and INCOMPLETE_TASK_NOTIFIER and DB_URI is not None:
             DbManger().rm_complete_task(self.message.link)
         msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"
         if self.isLeech:
+         """if SOURCE_LINK is True:
+                try:
+                    source_link = message_args[1]
+                    if is_magnet(source_link):
+                        link = telegraph.create_page(
+                        title='Helios-Mirror Source Link',
+                        content=source_link,
+                    )["path"]
+                        buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                    else:
+                        buttons.buildbutton(f"🔗 Source Link", source_link)
+                except Exception as e:
+                    LOGGER.warning(e)
+                pass
+                if reply_to is not None:
+                    try:
+                        reply_text = reply_to.text
+                        if is_url(reply_text):
+                            source_link = reply_text.strip()
+                            if is_magnet(source_link):
+                                link = telegraph.create_page(
+                                    title='Helios-Mirror Source Link',
+                                    content=source_link,
+                                )["path"]
+                                buttons.buildbutton(f"🔗 Source Link", f"https://telegra.ph/{link}")
+                            else:
+                                buttons.buildbutton(f"🔗 Source Link", source_link)
+                    except Exception as e:
+                        LOGGER.warning(e)
+                        pass"""
             if BOT_PM:
                 bot_d = bot.get_me()
                 b_uname = bot_d.username
