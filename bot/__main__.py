@@ -80,18 +80,18 @@ def call_back_data(update, context):
     
 def start(update, context) -> None:
     buttons = ButtonMaker()
-    buttons.buildbutton("Repo", "https://github.com/arkonn/Ark-Mirror")
-    buttons.buildbutton("Join Group", "https://t.me/arkmirror")
+    uname = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>'
+    buttons.buildbutton("Join Our Channel", "https://t.me/arkmirror")
     buttons.buildbutton("O W N E R", "https://t.me/include_i0stream")
     reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
     if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
         start_string = f'''
-Ark Mirror Bot is ready!
+Ark Mirror Bot is ready! 
 Type /{BotCommands.HelpCommand} to get a list of available commands
 '''
         sendMarkup(start_string, context.bot, update.message, reply_markup)
     else:
-        sendMarkup('Oops... You are not authorised to use Ark Mirror bot, Join our channel to use me', context.bot, update.message, reply_markup)
+        sendMarkup(f'Hey {uname}, Thank you for starting me in PM.\n\nYou will get all your files in PM from now.\n\nBut you are authorised only in our channel.\n\nJoin our channel to use me', context.bot, update.message, reply_markup)
 
 def restart(update, context):
     restart_message = sendMessage("Restarting...", context.bot, update.message)
