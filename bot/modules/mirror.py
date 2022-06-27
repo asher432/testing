@@ -344,14 +344,11 @@ class MirrorListener:
             except Exception as e:
                 LOGGER.error(str(e))
             count = len(download_dict)
-        msg = sendMarkup(msg + uploader + pmwarn_mirror + warnmsg, self.bot, self.update, InlineKeyboardMarkup(buttons.build_menu(2)))
         if count == 0:
             self.clean()
         else:
             update_all_messages()
-        Thread(target=auto_delete_upload_message, args=(bot, self.message, msg)).start()
-
-            
+          
     def onUploadError(self, error):
         reply_to = self.message.reply_to_message
         if reply_to is not None:
