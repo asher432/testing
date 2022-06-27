@@ -292,7 +292,6 @@ def get_readable_message():
                     msg += f"\n\n<b>ᴅᴏᴡɴʟᴏᴀᴅᴇᴅ :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
                 msg += f"\n<b>sᴘᴇᴇᴅ :</b> {download.speed()} | <b>ETA:</b> {download.eta()}"
                 msg += f"\n<b>ᴇʟᴀᴘsᴇᴅ : </b>{get_readable_time(time.time() - download.message.date.timestamp())}"
-                msg += f'\n<b>sᴏᴜʀᴄᴇ :</b> <a href="https://t.me/c/{str(download.message.chat.id)[4:]}/{download.message.message_id}">{download.message.from_user.first_name}</a>'
                 msg += f"\n<b>ᴇɴɢɪɴᴇ : </b> {download.eng()}"
                 try:
                     msg += f"\n<b>sᴇᴇᴅᴇʀs :</b> {download.aria_download().num_seeders}" \
@@ -304,8 +303,14 @@ def get_readable_message():
                            f" | <b>ʟᴇᴇᴄʜᴇʀs :</b> {download.torrent_info().num_leechs}"
                 except:
                     pass
-                
-                msg += f'\n<b>Requested User : </b> ️<code>{download.message.from_user.first_name}</code>️(<code>{download.message.from_user.id}</code>)'
+                if download.message.chat.type != 'private':
+                    try:
+                        chatid = str(download.message.chat.id)[4:]
+                        msg += f'\n<b>sᴏᴜʀᴄᴇ :</b> <a href="https://t.me/c/{chatid}/{download.message.message_id}">{download.message.from_user.first_name}</a> | (<code>{download.message.from_user.id}</code>)'
+                    except:
+                        pass
+                else:
+                    msg += f'\n<b>User: </b> ️<code>{download.message.from_user.first_name}</code>️ | (<code>{download.message.from_user.id}</code>)'
                 msg += f"\n<b>To Cancel : </b><code>/{BotCommands.CancelMirror} {download.gid()}</code>"
             elif download.status() == MirrorStatus.STATUS_SEEDING:
                 msg += f"\n<b>Size : </b>{download.size()}"
