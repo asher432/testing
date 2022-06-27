@@ -90,7 +90,7 @@ Type /{BotCommands.HelpCommand} to get a list of available commands
 '''
         sendMarkup(start_string, context.bot, update.message, reply_markup)
     else:
-        sendMarkup(f'Hey, Thank you for starting me in PM.\n\nYou will get all your files in PM from now.\n\nBut you are authorised only in our channel.\n\nJoin our channel to use me', context.bot, update.message, reply_markup)
+        sendMarkup(f'Hey,\n\nThank you for starting me in PM.\nYou will get all your files in PM from now.\n\nBut you are authorised to use me only in our channel.\n\nJoin our channel and Enjoy Mirroring', context.bot, update.message, reply_markup)
 
 def restart(update, context):
     restart_message = sendMessage("Restarting...", context.bot, update.message)
@@ -110,7 +110,7 @@ def ping(update, context):
     start_time = int(round(time() * 1000))
     reply = sendMessage("Starting Ping", context.bot, update.message)
     end_time = int(round(time() * 1000))
-    editMessage(f'{end_time - start_time} ms', reply)
+    editMessage(f'Pong..!\n{end_time - start_time} ms', reply)
 
 
 def log(update, context):
