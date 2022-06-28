@@ -1,4 +1,4 @@
-name: Manually Deploy to Heroku
+name: Manually Deploy to Railway
 
 on: workflow_dispatch
 
@@ -10,8 +10,7 @@ jobs:
       - uses: bervProject/railway-deploy@0.0.6-alpha
         with:
           RAILWAY_TOKEN: ${{secrets.RAILWAY_TOKEN}}
-          usedocker: true
-          docker_heroku_process_type: web
-          stack: "container"
+          using: 'docker'
+          image: Dockerfile
         env:
           HD_CONFIG_FILE_URL: ${{secrets.CONFIG_FILE_URL}}
